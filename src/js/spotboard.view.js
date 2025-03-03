@@ -392,6 +392,7 @@ function($, Handlebars, Spotboard) {
             // TODO index를 attr로 선택하도록
             var problem = problems[index];
             var problemStat = teamStatus.getProblemStatus(problem);
+
             $(this).removeClass('solved failed pending');
             if(problemStat.isAccepted()) {
                 // solved the problem, add balloon
@@ -416,7 +417,7 @@ function($, Handlebars, Spotboard) {
                         // invalidate all other previous first-solved runs
                         // TODO how to do it elegantly without accessing via jQuery?
                         // TODO check performance as well, worst case complexity is O(N^2)
-                        $('.problem-result' + '.solved-first' + '.problem-' + index).each(function() {
+                        $('.problem-result' + '.solved-first' + '.problem-' + problem['id']).each(function() {
                             var teamIdOther = $(this).attr('data-team-id');
                             var problemStatOther = contest.getTeamStatus(teamIdOther).getProblemStatus(problem);
                             // TODO remove this business logic into somewhere proper (e.g. contest.coffee)
