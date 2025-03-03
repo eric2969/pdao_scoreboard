@@ -27,3 +27,5 @@ For development, try `npm start`.
 [nvm]: https://github.com/creationix/nvm
 [http-server]: https://www.npmjs.com/package/http-server
 [nginx]: http://nginx.org/
+
+penaltyTime can be adjusted in the first line of ./js/contest.js

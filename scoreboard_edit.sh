@@ -5,6 +5,6 @@ curl -X 'PATCH' "https://be.pdogs.ntu.im/team-contest-scoreboard/30" \
           "challenge_label": "X",
           "title": "X",
           "target_problem_ids": [1801, 1802, 1803, 1804],
-          "penalty_formula": "solved_time_mins * 1 + wrong_submissions * 20",
+          "penalty_formula": "solved_time_mins * 1 + wrong_submissions * 50",
           "team_label_filter": ""
         }'
