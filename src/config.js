@@ -34,8 +34,8 @@ config =
      * Specify additional paths to WebSocket event notifier or award information.
      */
     path: {
-    events_ws: feed_server_path + "events",
-    "award_slide.json": "./sample/award_slide.json",
+        events_ws: feed_server_path + "events",
+        "award_slide.json": "./sample/award_slide.json",
     },
 
     /**
@@ -50,7 +50,7 @@ config =
     /**
      * Specify timeout (in milliseconds) for ajax request.
      */
-    fetch_timeout      : 1000,
+    fetch_timeout      : 1500,
 
     /**
      * Specify whether to show team group (affiliation) just below team name.
@@ -94,7 +94,7 @@ config =
      * The interval time (in milliseconds) of fetching run updates
      * (where instant-feeding with WebSocket is not used)
      */
-    auto_refresh_interval : 1000,
+    auto_refresh_interval : 2500,
 
 
     /** Specify whether to use pagination, or the number of teams per page. */
