@@ -277,7 +277,7 @@ function(Spotboard, $)  {
             var runCount = parseInt( Spotboard.runfeeder.getRunCount() );
             $("#update-icon").badger(runCount || '');
 
-            var contestTime = Spotboard.Manager.displayedContestTime;
+            var contestTime = Spotboard.runfeeder.getContestTime() - Spotboard.runfeeder.getLastTimeStamp();
             $("#time-elapsed").text(
                 Spotboard.Util.toTimeDisplayString(contestTime)
             );
@@ -298,17 +298,20 @@ function(Spotboard, $)  {
             var runfeeder = Spotboard.runfeeder,
                 contest = Spotboard.contest;
             var is_autodiff = Spotboard.config['auto_rundiff'];
-            var path = joinPath(Spotboard.config['apiBase'],
-                         is_autodiff ?  '/runs.json' : '/changed_runs.json'
-                        );
+            var path = joinPath(Spotboard.config['apiBase'], '/runs');
             $.ajax({
-                url : path + '?from=' + runfeeder.getLastTimeStamp(),
+                url : path,
                 dataType : 'json',
+                headers: {
+                    "auth-token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2Nzg4LCJleHBpcmUiOiIyMDI1LTAzLTEwVDEwOjM2OjUzLjM0MTk4MCIsImNhY2hlZF91c2VybmFtZSI6ImJvd2VuIn0.AyeqJlxM-FyHhKnmsCDseuQOgVXfOpFzqLJ5j6BYa5k", //Spotboard.config['auth_token'],
+                    "Content-Type": "application/json",
+                },
+                
                 success : function(data) {
                     var fn = runfeeder.fetchRunsFromJson;
                     if(is_autodiff) fn = runfeeder.diffAndFeedRuns;
 
-                    fn.call(runfeeder, data, function filter(r) {
+                    fn.call(runfeeder, data.data, function filter(r) {
                         // 이미 맞은 문제는 run 피드하지 않음
                         if(contest.getTeamStatus(r.getTeam()).getProblemStatus(r.getProblem()).isAccepted())
                             return false;

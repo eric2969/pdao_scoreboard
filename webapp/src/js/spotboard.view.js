@@ -397,7 +397,7 @@ function($, Handlebars, Spotboard) {
             if(problemStat.isAccepted()) {
                 // solved the problem, add balloon
                 $(this).addClass('solved');
-                if($team.find('.balloon.problem-' + index).length == 0)
+                if($team.find('.balloon.problem-' + problem["id"]).length == 0)
                     problemsNewlySolved.push(problemStat);
 
                 // tool text for the run

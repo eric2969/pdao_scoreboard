@@ -3,9 +3,16 @@
     "systemName": "PDOGS",
     "systemVersion": "",
     "problems": [
-        { "id": 1788, "name": "A", "color": "red", "title": "Hi" }
+        { "id": 1788, "name": "A", "color": "red", "title": "Hi" },
+        { "id": 1799, "name": "B", "color": "blue", "title": "Say Hi" },
+        { "id": 1797, "name": "C", "color": "green", "title": "Game Theory" },
+        { "id": 1800, "name": "D", "color": "yellow", "title": "turtle" }
     ],
     "teams": [
-        { "id": 2279, "name": "test" }
+        { "id": 2279, "name": "test" },
+        { "id": 2280, "name": "1fdsaf" },
+        { "id": 2281, "name": "2fefdsf" },
+        { "id": 2282, "name": "turtle" }
+
     ]
 }

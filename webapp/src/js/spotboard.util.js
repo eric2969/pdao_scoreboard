@@ -56,8 +56,9 @@ function($, Spotboard) {
 
         var hr = zerofill(hours, 2);
         var mt = zerofill(minutes % 60, 2);
+        var sc = zerofill(contestTime % 60, 2);
 
-        return (hr + ':' + mt);
+        return (hr + ':' + mt + ':' + sc);
     };
 
     /**
