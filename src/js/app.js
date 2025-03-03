@@ -4,7 +4,7 @@ define([
     'spotboard.manager'
 ],
 function(Spotboard, $) {
-
+    console.log('hello')
     // 비동기로 데이터를 로드한 후 시작
     $.when(
         Spotboard.Manager.loadContest(),
