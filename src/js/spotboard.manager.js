@@ -271,7 +271,7 @@ define([
         var runCount = parseInt(Spotboard.runfeeder.getRunCount());
         $("#update-icon").badger(runCount || "");
   
-        var contestTime = Spotboard.Manager.displayedContestTime;
+        var contestTime = Spotboard.runfeeder.getContestTime() - Spotboard.runfeeder.getLastTimeStamp();
         $("#time-elapsed").text(Spotboard.Util.toTimeDisplayString(contestTime));
   
         // NMU

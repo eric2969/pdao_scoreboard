@@ -392,12 +392,11 @@ function($, Handlebars, Spotboard) {
             // TODO index를 attr로 선택하도록
             var problem = problems[index];
             var problemStat = teamStatus.getProblemStatus(problem);
-
             $(this).removeClass('solved failed pending');
             if(problemStat.isAccepted()) {
                 // solved the problem, add balloon
                 $(this).addClass('solved');
-                if($team.find('.balloon.problem-' + index).length == 0)
+                if($team.find('.balloon.problem-' + problem["id"]).length == 0)
                     problemsNewlySolved.push(problemStat);
 
                 // tool text for the run

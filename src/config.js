@@ -94,7 +94,7 @@ config =
      * The interval time (in milliseconds) of fetching run updates
      * (where instant-feeding with WebSocket is not used)
      */
-    auto_refresh_interval : 2500,
+    auto_refresh_interval : 1500,
 
 
     /** Specify whether to use pagination, or the number of teams per page. */
