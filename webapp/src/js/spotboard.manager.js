@@ -33,11 +33,12 @@ function(Spotboard, $)  {
      *
      * @returns $df deferred object
      * Spotboard.contest 를 새로운 contest context로 set한다.
-     */
+    */
     Spotboard.Manager.loadContest = function() {
         var $df = new $.Deferred();
 
-        var path = joinPath(Spotboard.config['apiBase'], '/contest.json');
+        //var path = joinPath(Spotboard.config['apiBase'], '/contest.json');
+        var path = "./sample/contest.json";
 
         var onError = function(err) {
             if(console) console.log('Unable to fetch ' + path + ' : ' + err);
@@ -50,6 +51,7 @@ function(Spotboard, $)  {
             dataType : 'json',
             success : function(json) {
                 try {
+                    console.log('API Response:', json);
                     var contest = Contest.createFromJson(json);
                     Spotboard.contest = contest;
                     return $df.resolve('success');
@@ -67,6 +69,7 @@ function(Spotboard, $)  {
 
         return $df.promise();
     };
+    
 
     /**
      * run 들을 비동기로 로드한다.
@@ -77,13 +80,31 @@ function(Spotboard, $)  {
     Spotboard.Manager.loadRuns = function() {
         var $df = new $.Deferred();
 
-        var path = joinPath(Spotboard.config['apiBase'],  '/runs.json');
+        var path = joinPath(Spotboard.config['apiBase'], '/runs'); //runs.json
         $.ajax({
             url : path,
             dataType : 'json',
+            headers: {
+                "auth-token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2Nzg4LCJleHBpcmUiOiIyMDI1LTAzLTEwVDEwOjM2OjUzLjM0MTk4MCIsImNhY2hlZF91c2VybmFtZSI6ImJvd2VuIn0.AyeqJlxM-FyHhKnmsCDseuQOgVXfOpFzqLJ5j6BYa5k", //Spotboard.config['auth_token'],
+                "Content-Type": "application/json",
+              },
+              /*
             success : function(e) {
+                console.log("runs api success.")
                 Spotboard.$runs = e;
                 $df.resolve('success');
+            },
+            */
+
+            success: function (e) {
+                console.log("runs api response:", e)
+                console.log("data:", e.data)
+                if (e.data.time.NoMoreUpdate) {
+                  $df.resolve("success");
+                  return;
+                }
+                Spotboard.$runs = e.data;
+                $df.resolve("success");
             },
             error : function(xhr, stat, err) {
                 if(console) console.log('Unable to fetch ' + path + ' : ' + err);

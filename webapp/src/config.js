@@ -3,8 +3,8 @@
  */
 
 // pdogs api endpoint
-//feed_server_path = "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard";
-feed_server_path = './sample/';
+feed_server_path = "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard";
+//feed_server_path = './sample/';
 
 /*
 curl -X 'GET' "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/30/runs" \
@@ -28,8 +28,8 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    //apiBase : feed_server_path + "/" + scoreboard_id,
-    apiBase : feed_server_path,
+    apiBase : feed_server_path + "/" + scoreboard_id,
+    //apiBase : feed_server_path,
 
     /**
      * Specify additional paths to WebSocket event notifier or award information.
