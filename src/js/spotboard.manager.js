@@ -36,8 +36,9 @@ function(Spotboard, $)  {
      */
     Spotboard.Manager.loadContest = function() {
         var $df = new $.Deferred();
-
-        var path = joinPath(Spotboard.config['apiBase'], '/contest.json');
+        //use local data
+        //var path = joinPath(Spotboard.config['apiBase'], '/contest.json');
+        var path = "./sample/contest.json";
 
         var onError = function(err) {
             if(console) console.log('Unable to fetch ' + path + ' : ' + err);
@@ -77,12 +78,17 @@ function(Spotboard, $)  {
     Spotboard.Manager.loadRuns = function() {
         var $df = new $.Deferred();
 
-        var path = joinPath(Spotboard.config['apiBase'],  '/runs.json');
+        //use pdogs url path
+        var path = joinPath(Spotboard.config['apiBase'],  '/runs');
         $.ajax({
             url : path,
             dataType : 'json',
+            //pdogs require auth-token
+            headers: {
+                "auth-token": Spotboard.config["auth_token"],
+            },
             success : function(e) {
-                Spotboard.$runs = e;
+                Spotboard.$runs = e.data;
                 $df.resolve('success');
             },
             error : function(xhr, stat, err) {
@@ -277,12 +283,16 @@ function(Spotboard, $)  {
             var runfeeder = Spotboard.runfeeder,
                 contest = Spotboard.contest;
             var is_autodiff = Spotboard.config['auto_rundiff'];
-            var path = joinPath(Spotboard.config['apiBase'],
-                         is_autodiff ?  '/runs.json' : '/changed_runs.json'
-                        );
+            var path = joinPath(
+                Spotboard.config['apiBase'],
+                is_autodiff ?  '/runs': '/changed_runs'
+            );
             $.ajax({
-                url : path + '?from=' + runfeeder.getLastTimeStamp(),
-                dataType : 'json',
+                url: path,
+                dataType: "json",
+                headers: {
+                  "auth-token": Spotboard.config["auth_token"],
+                },
                 success : function(data) {
                     var fn = runfeeder.fetchRunsFromJson;
                     if(is_autodiff) fn = runfeeder.diffAndFeedRuns;
@@ -492,7 +502,8 @@ function(Spotboard, $)  {
             Spotboard.Manager.initTeamEventHandlers();
             Spotboard.Manager.initButtonEventHandlers();
             Spotboard.Manager.initSearchEventHandlers();
-            Spotboard.Manager.initWebsocketEventListener();
+            //disable websocket (pdogs does not support)
+            //Spotboard.Manager.initWebsocketEventListener();
 
             // ready contest.
             $(Spotboard).trigger('ready');
@@ -500,5 +511,4 @@ function(Spotboard, $)  {
     };
 
     return Spotboard.Manager;
-
 });

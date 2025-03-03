@@ -1,0 +1,14 @@
+{
+    "title": "PDAO 2025 test",
+    "systemName": "PDOGS 6.0",
+    "systemVersion": "",
+    "problems": [
+        { "id": 1797, "name": "A", "color": "red", "title": "Game theory" },
+        { "id": 1788, "name": "B", "color": "orange", "title": "Hi" }
+    ],
+    "teams": [
+        { "id": 2279, "name": "b12705064" },
+        { "id": 2280, "name": "b12705014" },
+        { "id": 2281, "name": "b12705049" }
+    ]
+}
