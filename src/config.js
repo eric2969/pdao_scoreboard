@@ -6,14 +6,8 @@
 feed_server_path = "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard";
 //feed_server_path = './sample/';
 
-/*
-curl -X 'GET' "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/30/runs" \
-      -H "auth-token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2Nzg4LCJleHBpcmUiOiIyMDI1LTAzLTEwVDEwOjM2OjUzLjM0MTk4MCIsImNhY2hlZF91c2VybmFtZSI6ImJvd2VuIn0.AyeqJlxM-FyHhKnmsCDseuQOgVXfOpFzqLJ5j6BYa5k" \
-      -H "Content-Type: application/json" \
-*/
-
 scoreboard_id = 30;
-auth_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2Nzg4LCJleHBpcmUiOiIyMDI1LTAzLTEwVDEwOjM2OjUzLjM0MTk4MCIsImNhY2hlZF91c2VybmFtZSI6ImJvd2VuIn0.AyeqJlxM-FyHhKnmsCDseuQOgVXfOpFzqLJ5j6BYa5k"
+auth_token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2ODA1LCJleHBpcmUiOiIyMDI1LTAzLTA5VDIyOjU2OjI1LjQ2NzUxMSIsImNhY2hlZF91c2VybmFtZSI6ImVyaWMyOTY5In0.fTmglPhvNGbDneZ-8HfzfoaC_sHZpQUESU7LpqiV9Oc";
 
 config =
 {
@@ -29,16 +23,14 @@ config =
      *    ${apiBase}/contest.json
      */
     apiBase : feed_server_path + "/" + scoreboard_id,
-    //apiBase : feed_server_path,
-
+    //apiBase : feed_server_path ,
+    auth_token : auth_token,
     /**
      * Specify additional paths to WebSocket event notifier or award information.
      */
-    path : {
-        'events_ws' : (feed_server_path + 'events')
-            .replace('http://', 'ws://')
-            .replace('https://', 'wss://'),
-        'award_slide.json' :'./sample/award_slide.json'
+    path: {
+        events_ws: feed_server_path + "events",
+        "award_slide.json": "./sample/award_slide.json",
     },
 
     /**
@@ -53,7 +45,7 @@ config =
     /**
      * Specify timeout (in milliseconds) for ajax request.
      */
-    fetch_timeout      : 5000,
+    fetch_timeout      : 1500,
 
     /**
      * Specify whether to show team group (affiliation) just below team name.

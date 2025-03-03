@@ -25,6 +25,13 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
-# Dependency directory
-# https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
+# build artifact
+spotboard-*.tar.gz
+
+# node
 node_modules
+package-lock.json
+js/dist
+
+public/
+dist/

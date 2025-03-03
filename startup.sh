@@ -1,0 +1,1 @@
+tmux new-session -d -s "scoreboard_server" "npm start"
