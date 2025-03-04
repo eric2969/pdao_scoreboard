@@ -1,0 +1,77 @@
+{
+    "title": "30",
+    "systemName": "PDOGS",
+    "systemVersion": "6.0",
+    "problems": [
+        {
+            "id": 1801,
+            "name": "A",
+            "color": "blue",
+            "title": "Say Hi"
+        },
+        {
+            "id": 1802,
+            "name": "B",
+            "color": "violet",
+            "title": "a + b"
+        },
+        {
+            "id": 1803,
+            "name": "C",
+            "color": "yellow",
+            "title": "Hello World"
+        },
+        {
+            "id": 1804,
+            "name": "D",
+            "color": "red",
+            "title": "repeat after me"
+        }
+    ],
+    "teams": [
+        {
+            "id": 2283,
+            "name": "b12705064"
+        },
+        {
+            "id": 2284,
+            "name": "b12705063"
+        },
+        {
+            "id": 2285,
+            "name": "b12705012"
+        },
+        {
+            "id": 2286,
+            "name": "b12705014"
+        },
+        {
+            "id": 2287,
+            "name": "b12705049"
+        },
+        {
+            "id": 2288,
+            "name": "b12705048"
+        },
+        {
+            "id": 2289,
+            "name": "b12705051"
+        },
+        {
+            "id": 2290,
+            "name": "b12705065"
+        },
+        {
+            "id": 2291,
+            "name": "b13705022"
+        },
+        {
+            "id": 2292,
+            "name": "b13705031"
+        },
+        {
+            "id": 2293,
+            "name": "b12705066"
+        }
+    ]
+}
