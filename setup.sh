@@ -7,5 +7,4 @@ echo "Installing scoreboard data..."
 npm install
 npm audit fix
 npm run build
-./scoreboard_edit.sh
 echo "Scoreboard data installed successfully!"
