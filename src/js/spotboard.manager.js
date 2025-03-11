@@ -78,7 +78,6 @@ function(Spotboard, $)  {
      */
     Spotboard.Manager.loadRuns = function() {
         var $df = new $.Deferred();
-
         var path = joinPath(Spotboard.config['apiBase'], '/runs'); //runs.json
         $.ajax({
             url : path,

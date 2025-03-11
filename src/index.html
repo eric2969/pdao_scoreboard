@@ -14,10 +14,13 @@
     <script type="text/javascript" src="js/require-config.js"></script>
     <script type="text/javascript">
     // production only settings (minified)
-    if(config.environment !== 'develop') {
-      require.config({
-        paths: { "app" : "spotboard-all.min" }
-      });
+    async function LoadConfig() {
+      await InitConfig();
+      if(config.environment !== 'develop') {
+        require.config({
+          paths: { "app" : "spotboard-all.min" }
+        });
+      }
     }
     require(['app']);
     </script>

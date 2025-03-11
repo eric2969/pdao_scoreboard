@@ -2,6 +2,8 @@
     "title": "PDAO 2025",
     "systemName": "PDOGS",
     "systemVersion": "6.0",
+    "scoreboard_id": "30",
+    "auth_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2ODA1LCJleHBpcmUiOiIyMDI1LTAzLTE4VDE2OjU2OjQwLjg1NjAwNiIsImNhY2hlZF91c2VybmFtZSI6ImVyaWMyOTY5In0.xZ7U5EpFJxk_YyrArTVtQCbAqDraEKWO92A51gc4FvE",
     "problems": [
         {
             "id": 1801,
@@ -31,47 +33,47 @@
     "teams": [
         {
             "id": 2283,
-            "name": "b12705064"
+            "name": "b12705064 (ntuim)"
         },
         {
             "id": 2284,
-            "name": "b12705063"
+            "name": "b12705063 (ntuim)"
         },
         {
             "id": 2285,
-            "name": "b12705012"
+            "name": "b12705012 (ntuim)"
         },
         {
             "id": 2286,
-            "name": "b12705014"
+            "name": "b12705014 (ntuim)"
         },
         {
             "id": 2287,
-            "name": "b12705049"
+            "name": "b12705049 (ntuim)"
         },
         {
             "id": 2288,
-            "name": "b12705048"
+            "name": "b12705048 (ntuim)"
         },
         {
             "id": 2289,
-            "name": "b12705051"
+            "name": "b12705051 (ntuim)"
         },
         {
             "id": 2290,
-            "name": "b12705065"
+            "name": "b12705065 (ntuim)"
         },
         {
             "id": 2291,
-            "name": "b13705022"
+            "name": "b13705022 (ntuim)"
         },
         {
             "id": 2292,
-            "name": "b13705031"
+            "name": "b13705031 (ntuim)"
         },
         {
             "id": 2293,
-            "name": "b12705066"
+            "name": "b12705066 (ntuim)"
         }
     ]
 }
