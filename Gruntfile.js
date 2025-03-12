@@ -69,14 +69,14 @@ module.exports = function (grunt) {
                         'img/**',
                         'css/**',
                         'assets/**',
-                        'sample/**',
 
                         'js/lib/**',
                         'js/app.js',
                         'js/require-config.js',
 
                         'robots.txt',
-                        'index.html'
+                        'index.html',
+                        'conteest_data.json'
                     ],
                     dest: 'dist/'
                 } ]
@@ -97,7 +97,7 @@ module.exports = function (grunt) {
             prod: {
                 options: {
                     port: 8000,
-                    base: 'dist',
+                    base: 'src',
                     keepalive: true,
                     hostname: '*'
                 }
