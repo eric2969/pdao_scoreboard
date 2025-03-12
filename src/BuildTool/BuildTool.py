@@ -71,4 +71,4 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path):
 title = input("Please enter the contest title: ")
 problem_csv = "ProblemsData.csv"
 teams_csv = "TeamsData.csv"
-csv_to_json(title, problem_csv, teams_csv, '../src/contest_data.json')
+csv_to_json(title, problem_csv, teams_csv, './contest_data.json')
