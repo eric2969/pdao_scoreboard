@@ -3,10 +3,13 @@ sudo apt update
 sudo apt upgrade
 sudo apt install nodejs npm tmux
 echo "Node js installed successfully!"
-echo "Installing scoreboard data..."
+echo "Updating scoreboard data..."
+cd BuildTool
+python3 BuildTool.py
+cd ../
+echo "Scoreboard data updated successfully!"
+echo "Building scoreboard website data..."
 npm install
 npm audit fix
 npm run build
-cd BuildTool
-python3 BuildTool.py
-echo "Scoreboard data installed successfully!"
+echo "Scoreboard constructed successfully!"

@@ -25,7 +25,7 @@ def edit_scoreboard(sid, token, problems):
 
 
 def csv_to_json(title, problems_csv, teams_csv, json_file_path):
-    sid = input("Enter the scoreboard id: ")
+    sid = input("Enter the scoreboard id from PDOGS: ")
     token = input("Enter the pdogs auth token: ")
     problems = []
     teams = []
