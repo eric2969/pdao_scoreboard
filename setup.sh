@@ -14,5 +14,5 @@ npm audit fix
 npm run build
 echo "Generating TLS/SSL certificates..."
 mkdir cert
-openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout cert/key.pem -out cert/cert.pem
+openssl req -x509 -newkey rsa:2048 -keyout cert/key.pem -out cert/cert.pem -days 365 -nodes -subj "/C=TW/ST=Taiwan/L=Taipei/O=National Taiwan University/OU=National Taiwan University Department of Information Management/CN=49.158.179.101"
 echo "Scoreboard constructed successfully!"
