@@ -7,4 +7,6 @@ echo "Installing scoreboard data..."
 npm install
 npm audit fix
 npm run build
+cd BuildTool
+python3 BuildTool.py
 echo "Scoreboard data installed successfully!"
