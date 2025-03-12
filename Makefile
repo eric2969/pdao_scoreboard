@@ -27,3 +27,4 @@ clean:
 	rm -rf src/js/metadata.js
 	rm -rf spotboard-*.tar.gz
 	rm -rf dist/
+	rm -rf cert/
