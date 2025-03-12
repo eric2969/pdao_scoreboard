@@ -69,6 +69,7 @@ module.exports = function (grunt) {
                         'img/**',
                         'css/**',
                         'assets/**',
+                        'BuildTool/**',
 
                         'js/lib/**',
                         'js/app.js',
@@ -76,7 +77,7 @@ module.exports = function (grunt) {
 
                         'robots.txt',
                         'index.html',
-                        'conteest_data.json'
+                        'contest_data.json'
                     ],
                     dest: 'dist/'
                 } ]
@@ -87,7 +88,7 @@ module.exports = function (grunt) {
                 options: {
                     process: function(content, srcpath) {
                         return content + '\n\n' +
-                            'config.environment = "production";\n';
+                            'prod = 1;\n';
                     }
                 }
             }

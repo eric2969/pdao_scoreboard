@@ -214,3 +214,5 @@ async function initConfig(){
 initConfig();
 
 let prod = 0;
+
+prod = 1;
