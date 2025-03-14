@@ -1,5 +1,7 @@
-import csv, json, requests
+import os, csv, json, requests
 
+if not os.path.exists("../credit"):
+    os.makedirs("../credit")
 def edit_scoreboard(sid, token, problems):
     print("Updating scoreboard ...")
     url = f"https://be.pdogs.ntu.im/team-contest-scoreboard/{sid}"

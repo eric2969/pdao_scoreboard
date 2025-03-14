@@ -1,7 +1,9 @@
 <?php
-
-    $url = "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/30/runs";
-    $authToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2ODA1LCJleHBpcmUiOiIyMDI1LTAzLTE4VDE2OjU2OjQwLjg1NjAwNiIsImNhY2hlZF91c2VybmFtZSI6ImVyaWMyOTY5In0.xZ7U5EpFJxk_YyrArTVtQCbAqDraEKWO92A51gc4FvE";
+    $sid_file = fopen("credit/sid.txt", "r") or die("Unable to open Scoreboard ID file!");
+    $sid = trim(fgets($sid_file));
+    $url = "https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/".$sid."/runs";
+    $token_file = fopen("credit/auth-token.txt", "r") or die("Unable to open Auth token file!");
+    $authToken = trim(fgets($token_file));
 
     // 初始化 cURL
     $ch = curl_init($url);

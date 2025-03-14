@@ -22,7 +22,7 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    apiBase : "backend/runs.php",
+    apiBase : "runs.php",
     contestData : "./contest_data.json",
 
     /**
