@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>PDAO Scoreboard</title>
-    <link rel="icon" href="assets/pdaologo.ico" type="image/x-icon">
+    <link rel="icon" href="img/pdaologo.ico" type="image/x-icon">
     <link href="css/normalize.css" rel="stylesheet" type="text/css">
     <link href="css/scoreboard.css" rel="stylesheet" type="text/css">
     <link href="css/jquery.badger.css" rel="stylesheet" type="text/css">
@@ -15,9 +15,7 @@
     <script type="text/javascript" src="js/require-config.js"></script>
     <script type="text/javascript">
       async function Initialize() {
-        await initConfig();
-        if(prod)
-          config.environment = "production";
+        await loadSound();
         if(config.environment !== 'develop') {
           require.config({
             paths: { "app" : "spotboard-all.min" }
@@ -29,11 +27,23 @@
     </script>
 
   </head>
-  <body><div id="wrapper">
-
+  <body>
+    <!-- mlg frog -->
+    <img src="img/mlg/mlg-pigeon.gif" alt="Pigeon" class="mlg-container">
+    <!-- Snoop Dogg -->
+    <img src="img/mlg/snoopdogg.gif" alt="Smoke weed everyday" class="snoopdogg-container">
+    <!-- Oiiai -->
+    <img src="img/mlg/Oiiai.gif" alt="Oiiaioiiiai" id="oiiai-gif" style="display: none;">
+    <!-- QuickScope -->
+    <img src="img/mlg/quickscope.gif" alt="QuickScope" id="quick-gif" style="display: none;">
+    <!-- Nyan -->
+    <img src="img/mlg/nyancat.gif" alt="Nyan cat" id="nyan-gif" style="display: block;">
+    <div id="wrapper">
     <div id="header">
       <span id="time-elapsed">xx:xx</span>
       <span id="clock-icon" class="icon"></span>
+      <span id="mute-icon"    class="icon hoverable" data-balloon="Sound Effect Muted" data-balloon-pos="down"></span>
+      <span id="unmute-icon"    class="icon hoverable" data-balloon="Sound Effect Unmuted" data-balloon-pos="down" style="display: none;"></span>
       <span id="events-icon"    class="icon hoverable" data-balloon="Show/Hide Events Timeline" data-balloon-pos="down"></span>
       <span id="feed-all-icon"  class="icon hoverable" data-balloon="Update All Runs" data-balloon-pos="down"></span>
       <span id="feed-one-icon"  class="icon hoverable" data-balloon="Update Single Run" data-balloon-pos="down"></span>
@@ -82,7 +92,6 @@
         Loading... Please Wait
         </div>
       </div>
-
       <!-- Footer -->
       <div id="credits">
         <span>
@@ -92,14 +101,13 @@
         </span>
         <span id="system-information">PDOGS v6.0</span>
         <span>Icons from <a href="http://www.fatcow.com/free-icons" target="_blank">FatCow</a></span>
-      </div>
+        </div>
 
       <!-- Dashboard -->
       <div id="dashboard">
-        <h2>
-          Recent events ::
-          <a id="events-filter"></a>
-        </h2>
+        <h2 style="font-weight: normal;">
+          Recent events
+        </h2><hr>
         <ul class="runs">
         </ul>
       </div>

@@ -1,9 +1,7 @@
 {
-    "title": "PDAO 2025",
+    "title": "PDAOiiaioiiiai",
     "systemName": "PDOGS",
     "systemVersion": "6.0",
-    "scoreboard_id": "30",
-    "auth_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NvdW50X2lkIjo2ODA1LCJleHBpcmUiOiIyMDI1LTAzLTE4VDE2OjU2OjQwLjg1NjAwNiIsImNhY2hlZF91c2VybmFtZSI6ImVyaWMyOTY5In0.xZ7U5EpFJxk_YyrArTVtQCbAqDraEKWO92A51gc4FvE",
     "problems": [
         {
             "id": 1801,
@@ -28,6 +26,12 @@
             "name": "D",
             "color": "red",
             "title": "repeat after me"
+        },
+        {
+            "id": 1820,
+            "name": "E",
+            "color": "pink",
+            "title": "Oiiaioiiiai"
         }
     ],
     "teams": [

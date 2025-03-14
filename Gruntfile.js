@@ -70,6 +70,8 @@ module.exports = function (grunt) {
                         'css/**',
                         'assets/**',
                         'BuildTool/**',
+                        'backend/**',
+                        'credit/**',
 
                         'js/lib/**',
                         'js/app.js',
@@ -88,7 +90,7 @@ module.exports = function (grunt) {
                 options: {
                     process: function(content, srcpath) {
                         return content + '\n\n' +
-                            'prod = 1;\n';
+                            'config.environment = "production";\n';
                     }
                 }
             }

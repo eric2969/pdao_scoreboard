@@ -24,7 +24,7 @@ def edit_scoreboard(sid, token, problems):
         print(f"Error occurred: {response.status_code}")
 
 
-def csv_to_json(title, problems_csv, teams_csv, json_file_path):
+def csv_to_json(title, problems_csv, teams_csv, json_file_path, credit_path, sid_path):
     sid = input("Enter the scoreboard id from PDOGS: ")
     token = input("Enter the pdogs auth token: ")
     problems = []
@@ -53,12 +53,16 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path):
         "title": title,
         "systemName": "PDOGS",
         "systemVersion": "6.0",
-        "scoreboard_id": sid,
-        "auth_token": token,
         "problems": problems,
         "teams": teams
     }
     
+    with open(sid_path, mode='w', encoding='utf-8') as sid_file:
+        sid_file.write(sid)
+
+    with open(credit_path, mode='w', encoding='utf-8') as toekn_file:
+        toekn_file.write(token)
+
     with open(json_file_path, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
     
@@ -71,4 +75,4 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path):
 title = input("Please enter the contest title: ")
 problem_csv = "ProblemsData.csv"
 teams_csv = "TeamsData.csv"
-csv_to_json(title, problem_csv, teams_csv, '../contest_data.json')
+csv_to_json(title, problem_csv, teams_csv, '../contest_data.json', '../credit/auth-token.txt', '../credit/sid.txt')

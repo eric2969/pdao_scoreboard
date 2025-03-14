@@ -78,13 +78,10 @@ function(Spotboard, $)  {
      */
     Spotboard.Manager.loadRuns = function() {
         var $df = new $.Deferred();
-        var path = joinPath(Spotboard.config['apiBase'], '/runs'); //runs.json
+        var path = Spotboard.config['apiBase']; 
         $.ajax({
             url : path,
             dataType : 'json',
-            headers: {
-                "auth-token": Spotboard.config['auth_token'],
-            },
             success: function (e) {
                 if (e.data.time.NoMoreUpdate) {
                   $df.resolve("success");
@@ -248,6 +245,18 @@ function(Spotboard, $)  {
             Spotboard.Dashboard.toggle(this);
         });
 
+        $("#mute-icon").click( function() {
+            Spotboard.config['sound_effects'] = true;
+            $(this).css('display', 'none');
+            $("#unmute-icon").css('display', 'block');
+        });
+
+        $("#unmute-icon").click( function() {
+            Spotboard.config['sound_effects'] = false;
+            $(this).css('display', 'none');
+            $("#mute-icon").css('display', 'block');
+        });
+
         $("#feed-auto-icon").click( function() {
             var $auto = $(this);
             if ($auto.hasClass('paused')) {
@@ -264,11 +273,19 @@ function(Spotboard, $)  {
             var runCount = parseInt( Spotboard.runfeeder.getRunCount() );
             $("#update-icon").badger(runCount || '');
 
-            var contestTime = Spotboard.runfeeder.getContestTime() - Spotboard.runfeeder.getLastTimeStamp();
+            var contestTime = Math.max(0, Spotboard.runfeeder.getContestTime() - Spotboard.runfeeder.getLastTimeStamp());
+            if(contestTime <= 0)
+                $("#time-elapsed").css("color", "red").css("font-weight", "bold");
+            else if(contestTime < 3600)
+                $("#time-elapsed").css("color", "orange").css("font-weight", "600");
+            else
+                $("#time-elapsed").css("color", "black").css("font-weight", "normal");
             $("#time-elapsed").text(
                 Spotboard.Util.toTimeDisplayString(contestTime)
             );
-
+            // Running Nyan catn
+            var window_width = parseInt($("html").css("width"));
+            $("#nyan-gif").css("left",  (Math.min(1, (Spotboard.runfeeder.getLastTimeStamp() / Spotboard.runfeeder.getContestTime())) * (window_width - 74) - 4405) + "px");
             // NMU
             if(Spotboard.runfeeder.isNoMoreUpdate()) {
                 $("#contest-title").addClass('no-more-update');
@@ -285,13 +302,10 @@ function(Spotboard, $)  {
             var runfeeder = Spotboard.runfeeder,
                 contest = Spotboard.contest;
             var is_autodiff = Spotboard.config['auto_rundiff'];
-            var path = joinPath(Spotboard.config['apiBase'], '/runs');
+            var path = Spotboard.config['apiBase'];
             $.ajax({
                 url : path,
                 dataType : 'json',
-                headers: {
-                    "auth-token": Spotboard.config['auth_token'],
-                },
                 success : function(data) {
                     var fn = runfeeder.fetchRunsFromJson;
                     if(is_autodiff) fn = runfeeder.diffAndFeedRuns;

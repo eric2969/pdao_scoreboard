@@ -8,7 +8,6 @@ define([
 function($, Spotboard) {
 
     Spotboard.Animation = {};
-
     // returns whether use animation or not. (true / false)
     var isUsingAnimation = function() {
         return (Spotboard.config['animation'] == true);
@@ -184,16 +183,35 @@ function($, Spotboard) {
                 if(this.problemStat.isAccepted())        this.runEvent = 'solved';
                 else if(this.problemStat.isPending())    this.runEvent = 'pending';
                 else if(this.problemStat.isFailed())    this.runEvent = 'failed';
-
+                var problem_id = this.$box.attr('class').split(" ")[1];
                 // flip 하면서 색깔 클래스 바꾸고 내용 업데이트함
                 return this.flip()
                     .progress( function() {
-
                         // update text and color
                         if(this.problemStat.getFailedAttempts() > 0) {
                             this.$box.find('.problem-result-text')
                                 .text("-" + this.problemStat.getFailedAttempts());
                         }
+                        // play sound effect
+                        if(this.runEvent === 'solved'){
+                            if(solved_problem[problem_id] === undefined){
+                                if(Spotboard.config['sound_effects'])
+                                    SE_first.play();
+                                $("#quick-gif").css("display", "block");
+                                setTimeout(() => {
+                                    $("#quick-gif").css("display", "none");
+                                }, 2000); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                                solved_problem[problem_id] = true;
+                            }
+                            else if(Spotboard.config['sound_effects'])
+                                SE_oiiai.play();
+                            $("#oiiai-gif").css("display", "block");
+                            setTimeout(() => {
+                                $("#oiiai-gif").css("display", "none");
+                            }, 3000); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                        }
+                        else if(this.runEvent === 'failed' && Spotboard.config['sound_effects'])
+                            SE_bruh.play();
                         this.$box.removeClass('solved pending failed').addClass(this.runEvent);
                     }.bind(this));
             },

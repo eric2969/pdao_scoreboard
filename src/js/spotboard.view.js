@@ -395,7 +395,8 @@ function($, Handlebars, Spotboard) {
 
             $(this).removeClass('solved failed pending');
             if(problemStat.isAccepted()) {
-                // solved the problem, add balloon
+                // solved the problem, add balloon and play sound effects
+                solved_problem['problem-' + problem['id']] = true;
                 $(this).addClass('solved');
                 if($team.find('.balloon.problem-' + problem["id"]).length == 0)
                     problemsNewlySolved.push(problemStat);
@@ -409,7 +410,6 @@ function($, Handlebars, Spotboard) {
                 // detect if first solved
                 if(Spotboard.config['show_first_solve']) {
                     var problemSummary = contest.getProblemSummary(problem);
-
                     if(problemSummary.isFirstSolved(problemStat)) {
                         $(this).addClass('solved-first')
                         var solvedFirstTime = problemStat.getSolvedTime();
@@ -428,6 +428,7 @@ function($, Handlebars, Spotboard) {
                 }
             }
             else {
+
                 if(problemStat.isPending())
                     $(this).addClass('pending');
                 else if(problemStat.isFailed())
@@ -435,10 +436,8 @@ function($, Handlebars, Spotboard) {
             }
 
             var sign = problemStat.isAccepted() ? "+" : "-";
-            if(problemStat.getFailedAttempts() > 0) {
-                $(this).find('.problem-result-text')
-                  .text(sign + problemStat.getFailedAttempts());
-            }
+            if(problemStat.getFailedAttempts() > 0)
+                $(this).find('.problem-result-text').text(sign + problemStat.getFailedAttempts());
         });
 
         problemsNewlySolved.sort(function(p, q) {
