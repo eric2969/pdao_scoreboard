@@ -65,7 +65,7 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path, credit_path, sid
     with open(credit_path, mode='w', encoding='utf-8') as toekn_file:
         toekn_file.write(token)
 
-    with open(json_file_path, mode='w', encoding='utf-8') as json_file:
+    with open(json_file_path, mode='w', encoding='big5') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
     
     print(f"Problems and Teams files have been converted to JSON file '{json_file_path}'.")
