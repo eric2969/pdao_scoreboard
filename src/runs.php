@@ -47,12 +47,13 @@
 
             // 關閉 cURL
             curl_close($ch);
-            apcu_add("runs", $data, 2);
+            apcu_add("runs", $data, 1);
         }
         return $data;
     }
     $runs = get_runs();
     header('Content-Type: application/json');
+    header('access-control-allow-origin: *');
     echo json_encode($runs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     
 ?>

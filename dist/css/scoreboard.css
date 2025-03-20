@@ -49,10 +49,16 @@
 
 html {
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.25), 0 0 1.5px rgba(0, 0, 0, 0.05);
-    background: linear-gradient(to bottom, white 0%, white 85%, #A0A0A0 100%);
-    height: 100%;
-    overflow: hidden;
-    margin: 0;
+}
+
+.shadow {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+    pointer-events: none;
 }
 
 sup {
@@ -307,6 +313,7 @@ sup {
     position: relative;
     font-size: 0.95em;
     margin: 2.75em 0 1em 0;
+    overflow: scroll !important;
 }
 
 .award-mode #team-list {
@@ -990,7 +997,7 @@ div.results:after {
     text-align: right;
     font-size: 1.1em;
     margin: 0.4em;
-    padding: 3em 0 0.6em 0;
+    padding: 1em 0 8em 0;
 
     position: relative;
     z-index: 999;
@@ -1028,26 +1035,27 @@ div.results:after {
 }
 
 /* vim: set ts=4 sts=4 sw=4: */
-.snoopdogg-container {
+#snoopdogg-container {
     position: fixed;
     bottom: 15px;
     left: 0;
-    width: 120px; /* 調整 GIF 大小 */
-    height: auto;
+    width: auto; /* 調整 GIF 大小 */
+    height: 15em;
     z-index: 1000; /* 確保在其他內容之上 */
 }
 
-.mlg-container {
+#mlg-container {
     position: fixed;
     bottom: 0;
     right: 0;
-    width: 150px; /* 調整 GIF 大小 */
-    height: auto;
+    width: auto; /* 調整 GIF 大小 */
+    height: 9.5em;
     z-index: 1000; /* 確保在其他內容之上 */
 }
 
 #oiiai-gif {
     position: absolute;
+    display: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -1057,6 +1065,7 @@ div.results:after {
 
 #quick-gif {
     position: absolute;
+    display: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

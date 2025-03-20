@@ -1,3 +1,4 @@
+var p_width = 3.5;
 define([
     'jquery',
     'handlebars',
@@ -380,8 +381,10 @@ function($, Handlebars, Spotboard) {
 
         // 페널티
         var penalty = teamStatus.getPenalty();
-        $team.find(".team-penalty").text( penalty );
-
+        if(penalty >= 10000) p_width = Math.max(p_width, 4.5);
+        else if(penalty >= 100000) p_width = Math.max(p_width, 5.5);
+        $team.find(".team-penalty").text(penalty);
+        $team.find(".team-penalty").css('width', p_width + 'em');
         // 등수
         var rank = teamStatus.getRank();
         Spotboard.View.updateTeamRank($team, rank);
