@@ -78,7 +78,6 @@ module.exports = function (grunt) {
 
                         'robots.txt',
                         'index.html',
-                        'contest_data.json',
                         'runs.php'
                     ],
                     dest: 'dist/'

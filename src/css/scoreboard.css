@@ -384,7 +384,7 @@ sup {
     width: 100%;
 }
 .team.followed.sticky-top {
-    top : 1em; /* ìƒë‹¨ header */
+    top : 1em; /* ?????? header */
 }
 .team.followed.sticky-bottom {
     bottom : 0em;
@@ -395,8 +395,8 @@ sup {
 }
 
 .team.followed.sticky-top + .team {
-    /* sticky ëœ ë‹¤ìŒ teamì˜ ìœ„ì¹˜ë¥¼ ì œëŒ€ë¡œ ë³´ì—¬ì£¼ê¸° ìœ„í•´
-     * div.teamì˜ heightì„ marginìœ¼ë¡œ ì ìš©í•¨. */
+    /* sticky ??? ??¤ì?? team??? ???ì¹?ë¥? ??????ë¡? ë³´ì?¬ì£¼ê¸? ??????
+     * div.team??? height??? margin??¼ë?? ?????©í??. */
     margin-top: 2.0em;
 }
 .team.followed.sticky-top ~ .team.visible-first {
@@ -555,6 +555,11 @@ div.team {
     list-style: none;
     padding: 0;
     margin: 0;
+}
+
+#blank{
+    display: block !important;
+    height: 8em;
 }
 
 #dashboard[data-filter="yes"] .run:not(.accepted) {
@@ -1039,18 +1044,18 @@ div.results:after {
     position: fixed;
     bottom: 15px;
     left: 0;
-    width: auto; /* èª¿æ•´ GIF å¤§å° */
+    width: auto; /* èª¿æ?? GIF å¤§å?? */
     height: 15em;
-    z-index: 1000; /* ç¢ºä¿åœ¨å…¶ä»–å…§å®¹ä¹‹ä¸Š */
+    z-index: 1000; /* ç¢ºä????¨å?¶ä????§å®¹ä¹?ä¸? */
 }
 
 #mlg-container {
     position: fixed;
     bottom: 0;
     right: 0;
-    width: auto; /* èª¿æ•´ GIF å¤§å° */
+    width: auto; /* èª¿æ?? GIF å¤§å?? */
     height: 9.5em;
-    z-index: 1000; /* ç¢ºä¿åœ¨å…¶ä»–å…§å®¹ä¹‹ä¸Š */
+    z-index: 1000; /* ç¢ºä????¨å?¶ä????§å®¹ä¹?ä¸? */
 }
 
 #oiiai-gif {
@@ -1081,5 +1086,6 @@ div.results:after {
     left: -4405px;
     height: 110px;
     width: auto;
-    z-index: 1005; /* ç¢ºä¿åœ¨å…¶ä»–å…§å®¹ä¹‹ä¸Š */
+    z-index: 1005; /* ç¢ºä????¨å?¶ä????§å®¹ä¹?ä¸? */
 }
+

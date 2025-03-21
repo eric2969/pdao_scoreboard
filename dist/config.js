@@ -1,14 +1,14 @@
 /**
  * Contest Configuration
  */
-let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // 定義全域變數
+let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // �?義�?��??�????
 async function loadSound() {
     SE_bruh = await new Audio("assets/sound/bruh.mp3");
     SE_oiiai = await new Audio("assets/sound/oiiai.mp3");
     SE_first = await new Audio("assets/sound/first_blood.mp3");
 }
 
-loadSound(); // 呼叫函式載入 JSON
+loadSound(); // ??��?��?��??�???? JSON
 
 config =
 {

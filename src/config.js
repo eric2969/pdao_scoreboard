@@ -1,14 +1,14 @@
 /**
  * Contest Configuration
  */
-let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // å®šç¾©å…¨åŸŸè®Šæ•¸
+let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // å®?ç¾©å?¨å??è®????
 async function loadSound() {
     SE_bruh = await new Audio("assets/sound/bruh.mp3");
     SE_oiiai = await new Audio("assets/sound/oiiai.mp3");
     SE_first = await new Audio("assets/sound/first_blood.mp3");
 }
 
-loadSound(); // å‘¼å«å‡½å¼è¼‰å…¥ JSON
+loadSound(); // ??¼å?«å?½å??è¼???? JSON
 
 config =
 {
