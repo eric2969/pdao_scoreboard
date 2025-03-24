@@ -71,6 +71,7 @@ module.exports = function (grunt) {
                         'assets/**',
                         'BuildTool/**',
                         'backend/**',
+                        'credit/**',
 
                         'js/lib/**',
                         'js/app.js',
@@ -78,7 +79,8 @@ module.exports = function (grunt) {
 
                         'robots.txt',
                         'index.html',
-                        'runs.php'
+                        'runs.php',
+                        'contest_data.json'
                     ],
                     dest: 'dist/'
                 } ]
