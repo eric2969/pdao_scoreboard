@@ -8,7 +8,7 @@ async function loadSound() {
     SE_first = await new Audio("assets/sound/first_blood.mp3");
 }
 
-loadSound(); // ??��?��?��??�???? JSON
+loadSound();
 
 config =
 {
@@ -22,7 +22,7 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    apiBase : "runs.php",
+    apiBase : "https://ntu.im/PDAO/runs.php",
     contestData : "./contest_data.json",
 
     /**

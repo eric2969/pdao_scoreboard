@@ -34,11 +34,10 @@ package-lock.json
 js/dist
 
 public/
+dist/
 
 #credit file
-dist/credit/*
 src/credit/*
 
 #contest file
-dist/contest_data.json
 src/contest_data.json

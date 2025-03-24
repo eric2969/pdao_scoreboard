@@ -285,7 +285,7 @@ function(Spotboard, $)  {
             );
             // Running Nyan catn
             var window_width = parseInt($("html").css("width"));
-            $("#nyan-gif").css("left",  (Math.min(1, (Spotboard.runfeeder.getLastTimeStamp() / Spotboard.runfeeder.getContestTime())) * (window_width - 74) - 4405) + "px");
+            $("#nyan-gif").css("left",  (Math.min(1, (Spotboard.runfeeder.getLastTimeStamp() / Spotboard.runfeeder.getContestTime())) * (window_width - 90) - 4720) + "px");
             // NMU
             if(Spotboard.runfeeder.isNoMoreUpdate()) {
                 $("#contest-title").addClass('no-more-update');

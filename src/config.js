@@ -1,14 +1,14 @@
 /**
  * Contest Configuration
  */
-let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // å®?ç¾©å?¨å??è®????
+let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // ï¿½?ç¾©ï¿½?ï¿½ï¿½??ï¿½????
 async function loadSound() {
     SE_bruh = await new Audio("assets/sound/bruh.mp3");
     SE_oiiai = await new Audio("assets/sound/oiiai.mp3");
     SE_first = await new Audio("assets/sound/first_blood.mp3");
 }
 
-loadSound(); // ??¼å?«å?½å??è¼???? JSON
+loadSound();
 
 config =
 {
@@ -22,7 +22,7 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    apiBase : "runs.php",
+    apiBase : "https://ntu.im/PDAO/runs.php",
     contestData : "./contest_data.json",
 
     /**

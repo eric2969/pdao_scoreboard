@@ -32,7 +32,7 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path, credit_path, sid
     problems = []
     teams = []
     pid = []
-    with open(problems_csv, mode='r', encoding='big5') as csv_file:
+    with open(problems_csv, mode='r', encoding='utf-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             pid.append(int(row["id"]))
