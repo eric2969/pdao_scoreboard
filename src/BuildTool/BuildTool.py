@@ -48,7 +48,7 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path, credit_path, sid
         for row in csv_reader:
             teams.append({
                 "id": int(row["id"]),
-                "name": (row["name"] + " (" + row["school"] + ")"),
+                "name": (row["name"].replace('(', '（').replace(')', '）') + " (" + row["school"] + ")"),
             })
     
     data = {
