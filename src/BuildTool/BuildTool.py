@@ -25,6 +25,34 @@ def edit_scoreboard(sid, token, problems):
     else:
         print(f"Error occurred: {response.status_code}")
 
+def lazy_judge(flag, token, problem_id):
+    if not flag:
+        print("Lazy judge is disabling.")
+        flag = False
+    else:
+        print("Lazy judge is enabling.")
+        flag = True
+    for i in problem_id:
+        url = f"https://be.pdogs.ntu.im/problem/{i}"
+        headers = {
+            "auth-token": token,
+            "Content-Type": "application/json"
+        }
+        data = {
+            "is_lazy_judge": flag,
+        }
+        response = requests.patch(url, json=data, headers=headers)
+        if response.status_code == 200:
+            if response.json()["success"]:
+                continue
+            else:
+                print(response.json()['error'])
+                return
+        else:
+            print(f"Error occurred: {response.status_code}")
+            return
+    print("Lazy judge has been updated successfully.")
+
 
 def csv_to_json(title, problems_csv, teams_csv, json_file_path, credit_path, sid_path):
     sid = input("Enter the scoreboard id from PDOGS: ")
@@ -71,6 +99,11 @@ def csv_to_json(title, problems_csv, teams_csv, json_file_path, credit_path, sid
     print(f"Problems and Teams files have been converted to JSON file '{json_file_path}'.")
     print("Please check the data contest_data.json at ../contest_data.json.")
     edit_scoreboard(sid, token, pid)
+    lazy_flag = input("Do you want to enable lazy judge? (y/n): ").strip().lower()
+    if lazy_flag == 'y':
+        lazy_judge(True, token, pid)
+    else:
+        lazy_judge(False, token, pid)
     
 
 # Example usage
