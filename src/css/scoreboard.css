@@ -1036,23 +1036,24 @@ div.results:after {
     background-color: gray;
 }
 
-/* vim: set ts=4 sts=4 sw=4: */
 #snoopdogg-container {
+    display: none;
     position: fixed;
     bottom: 15px;
     left: 0;
-    width: auto; /* 調�?? GIF 大�?? */
+    width: auto; 
     height: 15em;
-    z-index: 1000; /* 確�????��?��????�容�?�? */
+    z-index: 1000;
 }
 
 #mlg-container {
+    display: none;
     position: fixed;
     bottom: 0;
     right: 0;
-    width: auto; /* 調�?? GIF 大�?? */
+    width: auto; 
     height: 9.5em;
-    z-index: 1000; /* 確�????��?��????�容�?�? */
+    z-index: 1000; 
 }
 
 #oiiai-gif {
@@ -1085,3 +1086,4 @@ div.results:after {
     z-index: 1005;
 }
 
+/* vim: set ts=4 sts=4 sw=4: */

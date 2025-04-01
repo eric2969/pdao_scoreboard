@@ -40,6 +40,7 @@ def lazy_judge(flag, token, problem_id):
         }
         data = {
             "is_lazy_judge": flag,
+            "judge_type": "NORMAL",
         }
         response = requests.patch(url, json=data, headers=headers)
         if response.status_code == 200:
