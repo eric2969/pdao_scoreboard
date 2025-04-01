@@ -334,7 +334,6 @@ sup {
 
 #dashboard {
     display: none;
-    padding-bottom: 8em;
     overflow: hidden !important;
 }
 
@@ -999,7 +998,7 @@ div.results:after {
     text-align: right;
     font-size: 1.1em;
     margin: 0.4em;
-    padding: 1em 0 8em 0;
+    padding: 1em 0 1em 0;
 
     position: relative;
     z-index: 999;
