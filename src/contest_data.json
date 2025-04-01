@@ -80,6 +80,12 @@
             "name": "M",
             "color": "brown",
             "title": "The Cursed Envoys and the Race for Awakening"
+        },
+        {
+            "id": 1851,
+            "name": "N",
+            "color": "black",
+            "title": "Signal Synchronization in the Sky Port"
         }
     ],
     "teams": [
@@ -126,6 +132,30 @@
         {
             "id": 2293,
             "name": "b12705066 (資管二)"
+        },
+        {
+            "id": 2294,
+            "name": "oToToT (驗題隊伍)"
+        },
+        {
+            "id": 2295,
+            "name": "-1E+11 (驗題隊伍)"
+        },
+        {
+            "id": 2296,
+            "name": "asukasaito (驗題隊伍)"
+        },
+        {
+            "id": 2297,
+            "name": "bigeleph@nt29 (驗題隊伍)"
+        },
+        {
+            "id": 2298,
+            "name": "daniel (驗題隊伍)"
+        },
+        {
+            "id": 2299,
+            "name": "ltf0501 (驗題隊伍)"
         }
     ]
 }
