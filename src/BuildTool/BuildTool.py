@@ -1,10 +1,34 @@
 import os, csv, json, requests
 
-token = ""
 sid = ""
+headers = ""
 problems = []
 teams = []
 pid = []
+
+def Chk_Token():
+    global headers
+    if headers == "":
+        while True:
+            token = input("\nEnter the auth-token from PDOGS: ")
+            if token == "":
+                print("Auth-token cannot be empty. Please enter a valid one.")
+                continue
+            print("Validating auth-token ...")
+            url = f"https://be.pdogs.ntu.im/problem/1451"
+            headers_tmp = {"auth-token": token, "Content-Type": "application/json"}
+            response = requests.patch(url, headers=headers_tmp)
+            if response.status_code == 200:
+                if response.json()["error"] == "LoginExpired":
+                    print("Invalid auth-token. Please enter a valid one.")
+                    continue
+                else:
+                    print("Auth-token is valid.")
+                    headers = {"auth-token": token, "Content-Type": "application/json"}
+                    break
+            else:
+                print(f"Error occurred when validating auth-token: {response.status_code}")
+                return
 
 def Loading_Json(problems_csv, teams_csv):
     global problems, teams, pid
@@ -32,7 +56,7 @@ def Loading_Json(problems_csv, teams_csv):
 
 def Create_ContestData():
     global problems, teams
-    title = input("Please enter the contest title: ")
+    title = input("\nPlease enter the contest title: ")
     print("Creating contest data ...")
     json_file_path = "../contest_data.json"
     data = {
@@ -48,24 +72,10 @@ def Create_ContestData():
     print("Please check the data contest_data.json at ../contest_data.json.")
 
 def Create_CreditFiles():
-    global token, sid
+    global headers, sid
     if sid == "":
-        sid = input("Enter the scoreboard id from PDOGS: ")
-    if token == "":
-        while True:
-            token = input("Enter the auth-token from PDOGS: ").strip()
-            url = f"https://be.pdogs.ntu.im/problem/1451"
-            headers = {"auth-token": token, "Content-Type": "application/json"}
-            response = requests.patch(url, headers=headers)
-            if response.status_code == 200:
-                if response.json()["error"] == "LoginExpired":
-                    print("Invalid auth-token. Please enter a valid one.")
-                    continue
-                else:
-                    break
-            else:
-                print(f"Error occurred when validating auth-token: {response.status_code}")
-                return
+        sid = input("\nEnter the scoreboard id from PDOGS: ")
+    Chk_Token()
     if not os.path.exists("../credit"):
         os.makedirs("../credit")
     sid_path = "../credit/sid.txt"
@@ -73,37 +83,16 @@ def Create_CreditFiles():
     with open(sid_path, mode='w', encoding='utf-8') as sid_file:
         sid_file.write(sid)
     with open(token_path, mode='w', encoding='utf-8') as toekn_file:
-        toekn_file.write(token)
+        toekn_file.write(headers["auth-token"])
     print("Credit files have been created successfully.")
 
 def Edit_Scoreboard():
-    global token, sid, pid
+    global headers, sid, pid
     if sid == "":
-        sid = input("Enter the scoreboard id from PDOGS: ")
-    if token == "":
-        while True:
-            token = input("Enter the auth-token from PDOGS: ")
-            if token == "":
-                print("Auth-token cannot be empty. Please enter a valid one.")
-                continue
-            url = f"https://be.pdogs.ntu.im/problem/1451"
-            headers = {"auth-token": token, "Content-Type": "application/json"}
-            response = requests.patch(url, headers=headers)
-            if response.status_code == 200:
-                if response.json()["error"] == "LoginExpired":
-                    print("Invalid auth-token. Please enter a valid one.")
-                    continue
-                else:
-                    break
-            else:
-                print(f"Error occurred when validating auth-token: {response.status_code}")
-                return
+        sid = input("\nEnter the scoreboard id from PDOGS: ")
+    Chk_Token()
     print("Updating scoreboard", sid, "...")
     url = f"https://be.pdogs.ntu.im/team-contest-scoreboard/{sid}"
-    headers = {
-        "auth-token": token,
-        "Content-Type": "application/json"
-    }
     data = {
         "challenge_label": "X",
         "title": "X",
@@ -121,27 +110,10 @@ def Edit_Scoreboard():
         print(f"Error occurred: {response.status_code}")
 
 def Edit_LazyJudge():
-    global token, pid
-    if token == "":
-        while True:
-            token = input("Enter the auth-token from PDOGS: ")
-            if token == "":
-                print("Auth-token cannot be empty. Please enter a valid one.")
-                continue
-            url = f"https://be.pdogs.ntu.im/problem/1451"
-            headers = {"auth-token": token, "Content-Type": "application/json"}
-            response = requests.patch(url, headers=headers)
-            if response.status_code == 200:
-                if response.json()["error"] == "LoginExpired":
-                    print("Invalid auth-token. Please enter a valid one.")
-                    continue
-                else:
-                    break
-            else:
-                print(f"Error occurred when validating auth-token: {response.status_code}")
-                return
+    global headers, pid
+    Chk_Token()
     while True:
-        flag = input("Do you want to enable lazy judge? (y/n): ").strip().lower()
+        flag = input("\nDo you want to enable lazy judge? (y/n): ").strip().lower()
         if flag == 'y':
             print("Lazy judge is enabling.")
             flag = True
@@ -155,10 +127,6 @@ def Edit_LazyJudge():
     for i in pid:
         print("\nEnablaing" if flag else "Disabling", "lazy judge for problem", i, "...")
         url = f"https://be.pdogs.ntu.im/problem/{i}"
-        headers = {
-            "auth-token": token,
-            "Content-Type": "application/json"
-        }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             if response.json()["success"]:
@@ -220,7 +188,7 @@ if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)
 while True:
-    type = int(input("Menu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Exit\nEnter your choice: "))
+    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Exit\nEnter your choice: "))
     if type == 1:
         Create_ContestData()
         Create_CreditFiles()
@@ -242,4 +210,3 @@ while True:
         break
     else:
         print("Invalid choice. Please try again.")
-    print("")
