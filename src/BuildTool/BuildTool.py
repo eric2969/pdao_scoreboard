@@ -82,7 +82,10 @@ def Edit_Scoreboard():
         sid = input("Enter the scoreboard id from PDOGS: ")
     if token == "":
         while True:
-            token = input("Enter the auth-token from PDOGS: ").strip()
+            token = input("Enter the auth-token from PDOGS: ")
+            if token == "":
+                print("Auth-token cannot be empty. Please enter a valid one.")
+                continue
             url = f"https://be.pdogs.ntu.im/problem/1451"
             headers = {"auth-token": token, "Content-Type": "application/json"}
             response = requests.patch(url, headers=headers)
@@ -121,7 +124,10 @@ def Edit_LazyJudge():
     global token, pid
     if token == "":
         while True:
-            token = input("Enter the auth-token from PDOGS: ").strip()
+            token = input("Enter the auth-token from PDOGS: ")
+            if token == "":
+                print("Auth-token cannot be empty. Please enter a valid one.")
+                continue
             url = f"https://be.pdogs.ntu.im/problem/1451"
             headers = {"auth-token": token, "Content-Type": "application/json"}
             response = requests.patch(url, headers=headers)
@@ -146,28 +152,66 @@ def Edit_LazyJudge():
             break
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
-        
     for i in pid:
+        print("\nEnablaing" if flag else "Disabling", "lazy judge for problem", i, "...")
         url = f"https://be.pdogs.ntu.im/problem/{i}"
         headers = {
             "auth-token": token,
             "Content-Type": "application/json"
         }
-        data = {
-            "is_lazy_judge": flag,
-            "judge_type": "NORMAL",
-        }
-        response = requests.patch(url, json=data, headers=headers)
+        response = requests.get(url, headers=headers)
         if response.status_code == 200:
             if response.json()["success"]:
-                continue
+                judge_type = response.json()["data"]["judge_type"]
+                if judge_type == "CUSTOMIZED":
+                    print(f"Getting checker code of Problem {i}...")
+                    checker_id = response.json()["data"]["judge_source"]["code_uuid"]
+                    judge_url = "https://be.pdogs.ntu.im/s3-file/" + checker_id + "/url?filename=" + checker_id + "&as_attachment=true"
+                    response = requests.get(judge_url, headers=headers)
+                    if response.status_code == 200:
+                        judge_source = response.json()["data"]["url"]
+                    else:
+                        print(f"Error occurred when get checker source: {response.status_code}")
+                        return
+                    judge_code = requests.get(judge_source)
+                    if judge_code.status_code == 200:
+                        judge_code = judge_code.text
+                        print("Checker code fetched successfully.")
+                    else:
+                        print(f"Error occurred when get checker code: {judge_code.status_code}")
+                        return
+                    judge_source = {
+                        "judge_language": "python 3.8",
+                        "judge_code": judge_code,
+                    }
+                    data = {
+                        "is_lazy_judge": flag,
+                        "judge_type": judge_type,
+                        "judge_source": judge_source,
+                    }
+                else:
+                    data = {
+                        "is_lazy_judge": flag,
+                        "judge_type": judge_type,
+                    }
+                response = requests.patch(url, json=data, headers=headers)
+                if response.status_code == 200:
+                    if response.json()["success"]:
+                        print(f"Lazy judge has been {'enabled' if flag else 'disabled'} for problem {i}.")
+                        continue
+                    else:
+                        print(response.json()['error'])
+                        return
+                else:
+                    print(f"Error occurred when updating lazy judge: {response.status_code}")
+                    return
             else:
                 print(response.json()['error'])
                 return
         else:
-            print(f"Error occurred: {response.status_code}")
+            print(f"Error occurred when get judge type: {response.status_code}")
             return
-    print("Lazy judge has been updated successfully.")
+    print("\nLazy judge has been updated successfully.")
 
 print("Welcome to the PDOGS scoreboard tool!\nLoading Problems and Teams data ...")
 problem_csv = "ProblemsData.csv"
