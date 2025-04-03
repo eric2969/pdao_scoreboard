@@ -125,7 +125,8 @@ def Edit_LazyJudge():
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
     for i in pid:
-        print("\nEnablaing" if flag else "Disabling", "lazy judge for problem", i, "...")
+        print()
+        print("Enablaing" if flag else "Disabling", "lazy judge for problem", i, "...")
         url = f"https://be.pdogs.ntu.im/problem/{i}"
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
