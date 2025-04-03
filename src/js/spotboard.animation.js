@@ -191,6 +191,9 @@ function($, Spotboard) {
                         if(this.problemStat.getFailedAttempts() > 0) {
                             this.$box.find('.problem-result-text')
                                 .text("-" + this.problemStat.getFailedAttempts());
+                        } else if (this.problemStat.getFailedAttempts() == 0) {
+                            this.$box.find('.problem-result-text')
+                                .text("");
                         }
                         // play sound effect
                         if(this.runEvent === 'solved'){

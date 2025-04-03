@@ -441,6 +441,8 @@ function($, Handlebars, Spotboard) {
             var sign = problemStat.isAccepted() ? "+" : "-";
             if(problemStat.getFailedAttempts() > 0)
                 $(this).find('.problem-result-text').text(sign + problemStat.getFailedAttempts());
+            else if(problemStat.getFailedAttempts() == 0 && problemStat.isAccepted())
+                $(this).find('.problem-result-text').text("");
         });
 
         problemsNewlySolved.sort(function(p, q) {
