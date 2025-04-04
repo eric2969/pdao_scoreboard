@@ -15,6 +15,8 @@
     <script type="text/javascript" src="js/require-config.js"></script>
     <script type="text/javascript">
       async function Initialize() {
+        var contest_data_id = await makeid(10);
+        config['contestData'] = config['contestData'] + '?contest_data_id=' + contest_data_id;
         await loadSound();
         if(config.environment !== 'develop') {
           require.config({

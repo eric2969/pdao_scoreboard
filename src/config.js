@@ -8,7 +8,20 @@ async function loadSound() {
     SE_first = await new Audio("assets/sound/first_blood.mp3");
 }
 
+async function makeid(length) {
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    let counter = 0;
+    while (counter < length) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+      counter += 1;
+    }
+    return result;
+}
+
 loadSound();
+makeid(10);
 
 config =
 {
