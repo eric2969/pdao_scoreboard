@@ -1,20 +1,11 @@
 <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
     function get_data($key) {
-        $data = apcu_fetch($key);
-        if ($data === false) {
-            // 如果Cache中沒有資料，則從資料庫中獲取
-            // 將獲取到的資料存放在Cache中，設置過期時間為10分鐘
-            if($key == "sid") {
-                $sid_file = fopen("credit/sid.txt", "r") or die("Unable to open Scoreboard ID file!");
-                $data = trim(fgets($sid_file));
-            } else if($key == "auth-token") {
-                $token_file = fopen("credit/auth-token.txt", "r") or die("Unable to open Auth token file!");
-                $data = trim(fgets($token_file));
-            }
-            apcu_add($key, $data, 600);
+        if($key == "sid") {
+            $sid_file = fopen("credit/sid.txt", "r") or die("Unable to open Scoreboard ID file!");
+            $data = trim(fgets($sid_file));
+        } else if($key == "auth-token") {
+            $token_file = fopen("credit/auth-token.txt", "r") or die("Unable to open Auth token file!");
+            $data = trim(fgets($token_file));
         }
         return $data;
     }
