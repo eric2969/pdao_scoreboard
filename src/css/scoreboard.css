@@ -1059,11 +1059,11 @@ div.results:after {
     right: 0;
     width: auto; 
     height: 9.5em;
-    z-index: 1000; 
+    z-index: 1000;
 }
 
 #oiiai-gif {
-    position: absolute;
+    position: fixed;
     display: none;
     top: 50%;
     left: 50%;
@@ -1073,17 +1073,17 @@ div.results:after {
 }
 
 #pop-gif {
-    position: absolute;
+    position: fixed;
     display: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 60vh;
+    height: 40vh;
     z-index: 1000;
 }
 
 #quick-gif {
-    position: absolute;
+    position: fixed;
     display: none;
     top: 50%;
     left: 50%;
@@ -1099,7 +1099,7 @@ div.results:after {
     left: -4720px;
     height: 110px;
     width: auto;
-    z-index: 1005;
+    z-index: 1010;
 }
 
 /* vim: set ts=4 sts=4 sw=4: */

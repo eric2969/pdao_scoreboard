@@ -222,7 +222,7 @@ function($, Spotboard) {
                                 $("#pop-gif").css("display", "block");
                                 setTimeout(() => {
                                     $("#pop-gif").css("display", "none");
-                                }, 300); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                                }, 500); // 3 秒後替換 (根據 GIF 的實際時長調整)
                             }
                             if(Spotboard.config['sound_effects'])
                                 SE_pop.play();
