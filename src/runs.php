@@ -20,8 +20,7 @@
         }
         return $data;
     }
-
-    function get_runs(){
+    function get_runs($flag){
         $data = apcu_fetch("runs");
         if($data === false) {
             $sid = get_data("sid");
@@ -51,7 +50,7 @@
             curl_close($ch);
             apcu_add("runs", $data, 1);
         }
-        if($frozen_flag) {
+        if($flag) {
             $ContestTime = $data["data"]["time"]["contestTime"];
             foreach($data["data"]["runs"] as $key => $value)
                 if($ContestTime - $value["submissionTime"] * 60 <= 3600)
@@ -59,7 +58,7 @@
         }
         return $data;
     }
-    $runs = get_runs();
+    $runs = get_runs($frozen_flag);
     header('Content-Type: application/json');
     header('access-control-allow-origin: *');
     echo json_encode($runs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
