@@ -215,6 +215,15 @@ function($, Spotboard) {
                         }
                         else if(this.runEvent === 'failed' && Spotboard.config['sound_effects'])
                             SE_bruh.play();
+                        else if(this.runEvent === 'pending'){
+                            $("#pop-gif").css("display", "block");
+                            setTimeout(() => {
+                                $("#pop-gif").css("display", "none");
+                            }, 500); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                            if(Spotboard.config['sound_effects'])
+                                SE_pop.play();
+                        }
+                            
                         this.$box.removeClass('solved pending failed').addClass(this.runEvent);
                     }.bind(this));
             },

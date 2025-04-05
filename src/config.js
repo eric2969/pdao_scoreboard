@@ -1,11 +1,12 @@
 /**
  * Contest Configuration
  */
-let SE_bruh, SE_oiiai, SE_first, solved_problem = []; // �?義�?��??�????
+let SE_bruh, SE_oiiai, SE_first, solved_problem = []; 
 async function loadSound() {
     SE_bruh = await new Audio("assets/sound/bruh.mp3");
     SE_oiiai = await new Audio("assets/sound/oiiai.mp3");
     SE_first = await new Audio("assets/sound/first_blood.mp3");
+    SE_pop = await new Audio("assets/sound/pop.mp3");
 }
 
 async function makeid(length) {

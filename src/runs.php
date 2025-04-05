@@ -1,4 +1,5 @@
 <?php
+    $frozen_flag = true; // Manual control to freeze the scoreboard
     function get_data($key) {
         if($key == "sid") {
             $sid_file = fopen("credit/sid.txt", "r") or die("Unable to open Scoreboard ID file!");
@@ -39,6 +40,12 @@
             // 關閉 cURL
             curl_close($ch);
             apcu_add("runs", $data, 1);
+        }
+        if($frozen_flag) {
+            ContestTime = $data["data"]["time"]["contestTime"];
+            foreach($data["data"]["runs"] as $key => $value)
+                if(ContestTime - $value["submissionTime"] * 60 <= 3600)
+                    $data["data"]["runs"][$key]["result"] = "Pending";
         }
         return $data;
     }

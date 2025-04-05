@@ -1065,6 +1065,16 @@ div.results:after {
     z-index: 1000;
 }
 
+#pop-gif {
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 60vh;
+    z-index: 1000;
+}
+
 #quick-gif {
     position: absolute;
     display: none;
