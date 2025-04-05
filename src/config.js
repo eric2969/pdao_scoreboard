@@ -72,6 +72,7 @@ config =
         Sound effects should be muted on initialization
     */
     sound_effects : false,
+    gif_effects : false,
     /**
      * Specify whether to automatically start the scoreboard update.
      * If false, update will be paused.

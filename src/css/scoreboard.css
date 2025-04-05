@@ -178,6 +178,13 @@ sup {
     background-image: url(../img/control-unmute.png);
 }
 
+#gif-on-icon {
+    background-image: url(../img/gif_effect_on.png);
+}
+#gif-off-icon {
+    background-image: url(../img/gif_effect_off.png);
+}
+
 #notify-icon {
     background-image: url(../img/eye_close.png);
 }

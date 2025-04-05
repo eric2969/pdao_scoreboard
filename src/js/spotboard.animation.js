@@ -208,18 +208,22 @@ function($, Spotboard) {
                             }
                             else if(Spotboard.config['sound_effects'])
                                 SE_oiiai.play();
-                            $("#oiiai-gif").css("display", "block");
-                            setTimeout(() => {
-                                $("#oiiai-gif").css("display", "none");
-                            }, 3000); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                            if(Spotboard.config['gif_effects']){
+                                $("#oiiai-gif").css("display", "block");
+                                setTimeout(() => {
+                                    $("#oiiai-gif").css("display", "none");
+                                }, 3000); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                            }
                         }
                         else if(this.runEvent === 'failed' && Spotboard.config['sound_effects'])
                             SE_bruh.play();
                         else if(this.runEvent === 'pending'){
-                            $("#pop-gif").css("display", "block");
-                            setTimeout(() => {
-                                $("#pop-gif").css("display", "none");
-                            }, 500); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                            if(Spotboard.config['gif_effects']){
+                                $("#pop-gif").css("display", "block");
+                                setTimeout(() => {
+                                    $("#pop-gif").css("display", "none");
+                                }, 300); // 3 秒後替換 (根據 GIF 的實際時長調整)
+                            }
                             if(Spotboard.config['sound_effects'])
                                 SE_pop.play();
                         }
