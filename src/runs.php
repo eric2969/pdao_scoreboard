@@ -1,5 +1,15 @@
 <?php
+    $debug = true; // Set to true to enable debug mode
     $frozen_flag = true; // Manual control to freeze the scoreboard
+    if($debug) {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+    } else {
+        error_reporting(0);
+        ini_set('display_errors', 0);
+        ini_set('display_startup_errors', 0);
+    }
     function get_data($key) {
         if($key == "sid") {
             $sid_file = fopen("credit/sid.txt", "r") or die("Unable to open Scoreboard ID file!");
@@ -42,9 +52,9 @@
             apcu_add("runs", $data, 1);
         }
         if($frozen_flag) {
-            ContestTime = $data["data"]["time"]["contestTime"];
+            $ContestTime = $data["data"]["time"]["contestTime"];
             foreach($data["data"]["runs"] as $key => $value)
-                if(ContestTime - $value["submissionTime"] * 60 <= 3600)
+                if($ContestTime - $value["submissionTime"] * 60 <= 3600)
                     $data["data"]["runs"][$key]["result"] = "Pending";
         }
         return $data;
