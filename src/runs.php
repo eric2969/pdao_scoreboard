@@ -1,5 +1,5 @@
 <?php
-    $debug = true; // Set to true to enable debug mode
+    $debug = false; // Set to true to enable debug mode
     $frozen_flag = true; // Manual control to freeze the scoreboard
     if($debug) {
         error_reporting(E_ALL);
