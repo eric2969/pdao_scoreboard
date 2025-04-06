@@ -100,6 +100,7 @@ def Set_Unlock_Token():
     hashed_token = hashlib.sha256(token.encode('utf-8')).hexdigest()
     with open(lock_flag_path, mode='w', encoding='utf-8') as lock_flag_file:
         lock_flag_file.write("true")
+    os.chmod("../credit/lock_flag.txt", 0o777)
     with open(Unlock_token_path, mode='w', encoding='utf-8') as token_file:
         token_file.write(hashed_token)
     print("Unlock token has been created successfully, scoreboard has applied frozen lock.")
