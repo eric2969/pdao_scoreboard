@@ -115,10 +115,7 @@ config =
      *
      * e.g. function(team) { ... }
      */
-    exclude_teams : function(team) {
-        if( [].indexOf(team.getId()) >= 0 ) return true;
-        return false;
-    },
+    exclude_teams : [],
 
     /**
      * Specify additional foreign or extra teams, as a function or a list of team id.

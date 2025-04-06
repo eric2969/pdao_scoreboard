@@ -210,15 +210,14 @@ function(Spotboard, $)  {
 
     Spotboard.Manager.isTeamExcluded = function(team) {
         Spotboard.Manager._isExcluded = Spotboard.Manager._isExcluded || (function() {
-            var excludeTeams = Spotboard.config['exclude_teams'] || {};
-            if(typeof excludeTeams === 'function')
-                return excludeTeams;
+            var excludeTeams = Spotboard.config['exclude_teams'] || [];
 
             var ret = {};
             for(var i = 0; i < excludeTeams.length; ++ i) {
                 ret[excludeTeams[i]] = true;
             }
             return (function(team) {
+                if(!team) return true;
                 var teamid = (typeof team === 'number') ? team : team.getId();
                 return ret[teamid];
             });

@@ -1,4 +1,4 @@
-import os, csv, json, requests
+import os, csv, json, requests, hashlib
 
 sid = ""
 headers = ""
@@ -85,6 +85,24 @@ def Create_CreditFiles():
     with open(token_path, mode='w', encoding='utf-8') as toekn_file:
         toekn_file.write(headers["auth-token"])
     print("Credit files have been created successfully.")
+
+def Set_Unlock_Token():
+    while True:
+        token = input("\nPlease enter the unlock token(length must in [8,20]): ")
+        if len(token) < 8 or len(token) > 20:
+            print("Unlock token length must be between 8 and 20 characters. Please enter a valid one.")
+            continue
+        break
+    if not os.path.exists("../credit"):
+        os.makedirs("../credit")
+    Unlock_token_path = "../credit/Unlock-token.txt"
+    lock_flag_path = "../credit/lock_flag.txt"
+    hashed_token = hashlib.sha256(token.encode('utf-8')).hexdigest()
+    with open(lock_flag_path, mode='w', encoding='utf-8') as lock_flag_file:
+        lock_flag_file.write("true")
+    with open(Unlock_token_path, mode='w', encoding='utf-8') as token_file:
+        token_file.write(hashed_token)
+    print("Unlock token has been created successfully, scoreboard has applied frozen lock.")
 
 def Edit_Scoreboard():
     global headers, sid, pid
@@ -189,10 +207,11 @@ if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)
 while True:
-    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Exit\nEnter your choice: "))
+    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Set Scoreboard Frozen Lock\n7. Exit\nEnter your choice: "))
     if type == 1:
         Create_ContestData()
         Create_CreditFiles()
+        Set_Unlock_Token()
         Edit_Scoreboard()
         Edit_LazyJudge()
         print("Setup completed successfully.")
@@ -207,6 +226,8 @@ while True:
     elif type == 5:
         Edit_LazyJudge()
     elif type == 6:
+        Set_Unlock_Token()
+    elif type == 7:
         print("Exiting the program.")
         break
     else:

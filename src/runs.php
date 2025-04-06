@@ -1,6 +1,5 @@
 <?php
     $debug = false; // Set to true to enable debug mode
-    $frozen_flag = true; // Manual control to freeze the scoreboard
     if($debug) {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
@@ -17,6 +16,12 @@
         } else if($key == "auth-token") {
             $token_file = fopen("credit/auth-token.txt", "r") or die("Unable to open Auth token file!");
             $data = trim(fgets($token_file));
+        } else if($key == "lock-flag") {
+            $frozen_file = fopen("credit/lock_flag.txt", "r") or die("Unable to open lock file!");
+            $data = trim(fgets($frozen_file));
+            $data = ($data == "true") ? true : false;
+        } else {
+            die("Invalid key: $key");
         }
         return $data;
     }
@@ -50,7 +55,7 @@
             curl_close($ch);
             apcu_add("runs", $data, 1);
         }
-        if($flag) {
+        if(get_data("lock-flag")) {
             $ContestTime = $data["data"]["time"]["contestTime"];
             foreach($data["data"]["runs"] as $key => $value)
                 if($ContestTime - $value["submissionTime"] * 60 <= 3600)
