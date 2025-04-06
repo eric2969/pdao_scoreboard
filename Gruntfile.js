@@ -80,6 +80,7 @@ module.exports = function (grunt) {
                         'robots.txt',
                         'index.html',
                         'runs.php',
+                        'LockSet.php',
                         'contest_data.json'
                     ],
                     dest: 'dist/'

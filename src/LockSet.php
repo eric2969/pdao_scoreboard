@@ -9,7 +9,7 @@
         ini_set('display_errors', 0);
         ini_set('display_startup_errors', 0);
     }
-    $token_file = fopen("../credit/Unlock-token.txt", "r") or die("Unable to open Auth token file!");
+    $token_file = fopen("credit/Unlock-token.txt", "r") or die("Unable to open Auth token file!");
     $token = trim(fgets($token_file));
     fclose($token_file);
     echo $token;
