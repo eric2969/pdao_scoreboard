@@ -260,12 +260,16 @@ function(Spotboard, $)  {
             Spotboard.config['gif_effects'] = true;
             $(this).css('display', 'none');
             $("#gif-on-icon").css('display', 'block');
+            $("#mlg-container").css('display', 'block');
+            $("#snoopdogg-container").css('display', 'block');
         });
 
         $("#gif-on-icon").click( function() {
             Spotboard.config['gif_effects'] = false;
             $(this).css('display', 'none');
             $("#gif-off-icon").css('display', 'block');
+            $("#mlg-container").css('display', 'none');
+            $("#snoopdogg-container").css('display', 'none');
         });
 
         $("#feed-auto-icon").click( function() {
