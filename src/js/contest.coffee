@@ -336,7 +336,7 @@ class Run
     # if context == null, this Run is not yet reflected
     constructor : (@contest, @id, @problem, @team, @time, @result) ->
         assert @contest == @problem.getContest() if @contest?
-        assert @contest == @team.getContest() if (@contest? and @team?)
+        assert @contest == @team.getContest() if @contest?
 
     clone : ->
         return new Run(@contest, @id, @problem, @team, @time, @result)
