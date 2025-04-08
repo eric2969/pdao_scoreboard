@@ -45,7 +45,7 @@ def Loading_Json(problems_csv, teams_csv):
                 "color": row["color"],
                 "title": row["title"]
             })
-    with open(teams_csv, mode='r', encoding='big5') as csv_file:
+    with open(teams_csv, mode='r', encoding='utf-8') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             teams.append({
@@ -203,7 +203,7 @@ def Edit_LazyJudge():
 
 print("Welcome to the PDOGS scoreboard tool!\nLoading Problems and Teams data ...")
 problem_csv = "ProblemsData.csv"
-teams_csv = "TeamsData.csv"
+teams_csv = "TeamsData_official.csv"
 if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)

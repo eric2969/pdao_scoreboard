@@ -662,7 +662,7 @@
       if (this.contest != null) {
         assert(this.contest === this.problem.getContest());
       }
-      if (this.contest != null) {
+      if (this.contest != null && this.team != null) {
         assert(this.contest === this.team.getContest());
       }
     }
