@@ -77,7 +77,7 @@ sup {
 #wrapper {
     float: left;
     position: relative;
-    min-width: 100%;
+    width: 100vw;
 }
 
 .tickLabel {
@@ -321,7 +321,6 @@ sup {
     font-size: 0.95em;
     margin: 2.75em 0 1em 0;
     overflow: scroll !important;
-    width: 100vw;
 }
 
 .award-mode #team-list {
