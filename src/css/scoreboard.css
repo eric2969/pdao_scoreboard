@@ -1043,7 +1043,6 @@ div.results:after {
 }
 
 #snoopdogg-container {
-    display: none;
     position: fixed;
     bottom: 15px;
     left: 0;
@@ -1053,7 +1052,6 @@ div.results:after {
 }
 
 #mlg-container {
-    display: none;
     position: fixed;
     bottom: 0;
     right: 0;
