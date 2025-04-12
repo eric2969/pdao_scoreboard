@@ -91,6 +91,10 @@ def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
+@app.route("/login_status")
+def login_status():
+    return jsonify({"logged_in": session.get('logged_in', False)})
+
 @app.route("/api/runs")
 def api_runs():
     runs = load_data()
@@ -121,10 +125,11 @@ def update_status():
     status = load_status()
     if run_id not in status:
         status[run_id] = {"made": False, "sent": False}
-
+    if field == "made":
+        status[run_id]["sent"] = False
     status[run_id][field] = value
     save_status(status)
     return jsonify({"success": True})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.run(host="0.0.0.0", port=3001)

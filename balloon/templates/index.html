@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>Balloon Dispatch</title>
+  <title>Balloon Utility</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <style>
@@ -32,20 +32,20 @@
 
 <nav class="navbar navbar-light bg-light shadow-sm mb-4 px-4">
   <div class="container-fluid">
-    <span class="navbar-brand mb-0 h4">🎈 Balloon Dispatch</span>
+    <span class="navbar-brand mb-0 h4">🎈 Balloon Utility</span>
     <a class="btn btn-outline-secondary btn-sm" href="/logout">登出</a>
   </div>
 </nav>
 
 <div class="container-flex">
-  <div style="flex: 2;">
+  <div style="flex: 4;">
     <table class="table table-bordered align-middle text-center bg-white">
       <thead class="table-light">
         <tr>
           <th>隊名</th>
           <th>座位</th>
           <th>題號</th>
-          <th>氣球顏色</th>
+          <th>顏色</th>
           <th>提交時間</th>
           <th>製作氣球</th>
           <th>送出氣球</th>
@@ -54,9 +54,9 @@
       <tbody id="runs-body"></tbody>
     </table>
   </div>
-  <div style="flex: 3; display: flex; flex-direction: column; height: 100%;">
+  <div style="flex: 7; display: flex; flex-direction: column; height: 100%;">
     <h4 class="text-center mb-2">講台</h4>
-    <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+    <div style="display: flex; justify-content: center; align-items: center;">
       <table class="table table-bordered text-center align-middle m-0"
              style="padding: 0;table-layout: fixed; width: 100%; height: 100%;
                     font-size: calc(1.2rem); font-weight: bold;">
@@ -100,12 +100,12 @@
     $.each(cols, col => {
       const pos = cols[col] + rows[row];
       const team = teamByPosition[pos];
-      const div = $('<div>').addClass('seat').attr('data-position', pos);
+      const div = $('<div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">').addClass('seat').attr('data-position', pos);
       if (team)
         div.addClass('occupied').html(`${team.name}`);
       else
         div.addClass('occupied').html("-");
-      const $td = $('<td style="padding: 0.3rem; border: 0;">').append(div);
+      const $td = $('<td style="padding: 0.1rem; border: 0;">').append(div);
       $('#seating-map').append($tr.append($td));
       positionMap[pos] = div[0];
     });
@@ -133,6 +133,7 @@
   function renderRuns() {
     $.getJSON('/api/runs', function (runs) {
       const $tbody = $('#runs-body').empty();
+      runs.reverse();
       $.each(runs, function (_, run) {
         const madeBtn = $('<button class="btn btn-sm">')
           .toggleClass('btn-warning', !run.made)
@@ -155,14 +156,16 @@
               return;
             } else if(run.sent)
               return;
+            const msg = '確定已送出氣球？';
+            if (!confirm(msg)) return;
             updateStatus(run.id, 'sent', !run.sent).then(renderRuns);
           });
 
         const $row = $(`
           <tr>
-            <td>${run.team_name}</td>
+            <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${run.team_name}</td>
             <td>${run.team_position}</td>
-            <td>${run.problem_name}</td>
+            <td>${run.problem_label}</td>
             <td style="color:${run.color}; font-weight:bold;">${run.color}</td>
             <td>${formatTime(run.submissionTime)}</td>
           </tr>
@@ -177,6 +180,17 @@
 
   $(renderRuns);
   setInterval(renderRuns, 1000);
+
+  function check_login() {
+    $.getJSON('/login_status', function (data) {
+      if (!data.logged_in) {
+        alert('Session expired. Please log in again.');
+        window.location.href = '/login';
+      }
+    });
+  }
+  $(check_login);
+  setInterval(check_login, 10000); // 每分鐘檢查一次登入狀態
 </script>
 </body>
 </html>
