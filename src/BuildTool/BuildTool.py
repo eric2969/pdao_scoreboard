@@ -51,6 +51,7 @@ def Loading_Json(problems_csv, teams_csv):
             teams.append({
                 "id": int(row["id"]),
                 "name": (row["name"].replace('(', '（').replace(')', '）') + " (" + row["school"] + ")"),
+                "position": row["position"],
             })
     print("Problems and Teams data loaded successfully.")
 
@@ -202,7 +203,7 @@ def Edit_LazyJudge():
     print("\nLazy judge has been updated successfully.")
 
 print("Welcome to the PDOGS scoreboard tool!\nLoading Problems and Teams data ...")
-problem_csv = "ProblemsData_official.csv"
+problem_csv = "ProblemsData.csv"
 teams_csv = "TeamsData_official.csv"
 if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")

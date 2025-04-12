@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>Balloon Dispatch</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <style>
+    body { background-color: #f8f9fa; padding: 1rem; }
+    .container-flex { display: flex; gap: 2rem; }
+    .seat {
+      border-radius: 8px;
+      text-align: center;
+      padding: 0.3rem;
+      background-color: #fff;
+      line-height: 1.1;
+      word-wrap: break-word;
+      white-space: normal;
+      font-size: inherit;
+    }
+    .seat.occupied {
+      background-color: #e2f0d9;
+    }
+    .seat.highlight {
+      background-color: #ffc107 !important;
+      border-color: #ff8f00 !important;
+    }
+    .btn-sm { font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-light bg-light shadow-sm mb-4 px-4">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h4">🎈 Balloon Dispatch</span>
+    <a class="btn btn-outline-secondary btn-sm" href="/logout">登出</a>
+  </div>
+</nav>
+
+<div class="container-flex">
+  <div style="flex: 2;">
+    <table class="table table-bordered align-middle text-center bg-white">
+      <thead class="table-light">
+        <tr>
+          <th>隊名</th>
+          <th>座位</th>
+          <th>題號</th>
+          <th>氣球顏色</th>
+          <th>提交時間</th>
+          <th>製作氣球</th>
+          <th>送出氣球</th>
+        </tr>
+      </thead>
+      <tbody id="runs-body"></tbody>
+    </table>
+  </div>
+  <div style="flex: 3; display: flex; flex-direction: column; height: 100%;">
+    <h4 class="text-center mb-2">講台</h4>
+    <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
+      <table class="table table-bordered text-center align-middle m-0"
+             style="padding: 0;table-layout: fixed; width: 100%; height: 100%;
+                    font-size: calc(1.2rem); font-weight: bold;">
+        <tbody id="seating-map" style="padding: 0;"></tbody>
+      </table>
+    </div>
+  </div>  
+
+</div>
+
+<script>
+  const teams = {{ contest_data.teams | tojson }};
+  const positionMap = {};
+  const rowsSet = new Set(), colsSet = new Set(), teamByPosition = {};
+
+  $.each(teams, (id, team) => {
+    const pos = team.position;
+    var maxCol = 0;
+    var maxRow = 0;
+    if (pos && pos.length >= 2) {
+      const col = pos[0].toUpperCase();
+      const row = parseInt(pos.slice(1));
+      maxCol = Math.max(maxCol, col.charCodeAt(0) - 'A'.charCodeAt(0));
+      maxRow = Math.max(maxRow, row - 1);
+      rowsSet.add(row); colsSet.add(col);
+      teamByPosition[pos] = team;
+    }
+    for(let i = 0; i < maxCol; i++)
+      if(!colsSet.has(String.fromCharCode('A'.charCodeAt(0) + i)))
+        colsSet.add(String.fromCharCode('A'.charCodeAt(0) + i));
+    for(let i = 0; i < maxRow; i++)
+      if(!rowsSet.has(i+1))
+        rowsSet.add(i+1);
+  });
+
+  const rows = [...rowsSet].sort((a,b)=>a-b);
+  const cols = [...colsSet].sort();
+
+  $.each(rows, row => {
+    const $tr = $('<tr style="border: 0;">');
+    $.each(cols, col => {
+      const pos = cols[col] + rows[row];
+      const team = teamByPosition[pos];
+      const div = $('<div>').addClass('seat').attr('data-position', pos);
+      if (team)
+        div.addClass('occupied').html(`${team.name}`);
+      else
+        div.addClass('occupied').html("-");
+      const $td = $('<td style="padding: 0.3rem; border: 0;">').append(div);
+      $('#seating-map').append($tr.append($td));
+      positionMap[pos] = div[0];
+    });
+  });
+
+  function highlightSeat(position) {
+    $('.seat').removeClass('highlight');
+    const seat = positionMap[position];
+    if (seat) $(seat).addClass('highlight');
+  }
+
+  function formatTime(minutes) {
+    return `${Math.floor(minutes / 60)}:${(minutes % 60).toString().padStart(2, '0')}`;
+  }
+
+  function updateStatus(id, field, value) {
+    return $.ajax({
+      url: '/api/update_status',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ id, field, value })
+    });
+  }
+
+  function renderRuns() {
+    $.getJSON('/api/runs', function (runs) {
+      const $tbody = $('#runs-body').empty();
+      $.each(runs, function (_, run) {
+        const madeBtn = $('<button class="btn btn-sm">')
+          .toggleClass('btn-warning', !run.made)
+          .toggleClass('btn-success', run.made)
+          .text(run.made ? '🎉 已完成' : '🛠️ 待製作')
+          .click(() => {
+            const msg = run.made ? '要回復為「待製作」嗎？' : '確定已完成製作？';
+            if (!confirm(msg)) return;
+            updateStatus(run.id, 'made', !run.made).then(renderRuns);
+          });
+
+        const sendBtn = $('<button class="btn btn-sm btn-primary">🎈 送出</button>')
+          .text(run.sent ? '🎉 已送出' : '🎈 送出')
+          .toggleClass('btn-success', run.sent)
+          .toggleClass('btn-primary', !run.sent)
+          .prop('disabled', !run.made)
+          .click(() => {
+            if (!run.made) {
+              alert('請先完成製作氣球！');
+              return;
+            } else if(run.sent)
+              return;
+            updateStatus(run.id, 'sent', !run.sent).then(renderRuns);
+          });
+
+        const $row = $(`
+          <tr>
+            <td>${run.team_name}</td>
+            <td>${run.team_position}</td>
+            <td>${run.problem_name}</td>
+            <td style="color:${run.color}; font-weight:bold;">${run.color}</td>
+            <td>${formatTime(run.submissionTime)}</td>
+          </tr>
+        `).on('mouseenter click', () => highlightSeat(run.team_position));
+
+        $row.append($('<td>').append(madeBtn));
+        $row.append($('<td>').append(sendBtn));
+        $tbody.append($row);
+      });
+    });
+  }
+
+  $(renderRuns);
+  setInterval(renderRuns, 1000);
+</script>
+</body>
+</html>
