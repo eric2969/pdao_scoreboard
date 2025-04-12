@@ -116,6 +116,7 @@ config =
      * e.g. function(team) { ... }
      */
     exclude_teams : [],
+    // exclude_teams : [2283, 2284, 2285, 2286, 2287, 2288, 2289, 2290, 2291, 2292, 2293, 2294, 2295, 2296, 2297, 2298, 2299],
 
     /**
      * Specify additional foreign or extra teams, as a function or a list of team id.
