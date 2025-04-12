@@ -27,9 +27,6 @@
     .seat.vaccant {
       background-color: #fc4848;
     }
-    .seat.door{
-      background-color: #756dff;
-    }
     .seat.highlight {
       background-color: #ffc107 !important;
       border-color: #ff8f00 !important;
@@ -110,9 +107,7 @@
       const pos = cols[col] + rows[row];
       const team = teamByPosition[pos];
       const div = $('<div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">').addClass('seat').attr('data-position', pos);
-      if (team && team.name == "門口")
-        div.addClass('door').html(`${team.name}`);
-      else if(team)
+      if(team)
         div.addClass('occupied').html(`${team.name}`);
       else
         div.addClass('vaccant').html("-");
