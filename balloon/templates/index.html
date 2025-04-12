@@ -21,6 +21,15 @@
     .seat.occupied {
       background-color: #e2f0d9;
     }
+    .seat.occupied:hover {
+      background-color: #d1e7dd;
+    }
+    .seat.vaccant {
+      background-color: #fc4848;
+    }
+    .seat.door{
+      background-color: #756dff;
+    }
     .seat.highlight {
       background-color: #ffc107 !important;
       border-color: #ff8f00 !important;
@@ -101,10 +110,12 @@
       const pos = cols[col] + rows[row];
       const team = teamByPosition[pos];
       const div = $('<div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">').addClass('seat').attr('data-position', pos);
-      if (team)
+      if (team && team.name == "門口")
+        div.addClass('door').html(`${team.name}`);
+      else if(team)
         div.addClass('occupied').html(`${team.name}`);
       else
-        div.addClass('occupied').html("-");
+        div.addClass('vaccant').html("-");
       const $td = $('<td style="padding: 0.1rem; border: 0;">').append(div);
       $('#seating-map').append($tr.append($td));
       positionMap[pos] = div[0];
