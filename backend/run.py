@@ -3,8 +3,8 @@ from functools import wraps
 from flask_cors import CORS
 import requests, json, os, re, hashlib, time
 
-app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+app = Flask(__name__, static_url_path='/pdao_be/static')
+CORS(app, resources={r"/pdao_be/api/*": {"origins": "*"}})
 app.secret_key = os.urandom(24)  # Generate a random secret key for session management
 
 STATUS_FILE = "backend_file/status.json"
@@ -20,6 +20,7 @@ token = None
 scoreboard_cache = {"data": None, "timestamp": 0}
 fetch_flag = False
 contest_data = None
+status = None
 
 # 讀取配置檔案
 def load_config():
@@ -77,18 +78,20 @@ def load_contest_metadata():
         return []
 
 def load_status():
+    global status
     if not os.path.exists(STATUS_FILE):
-        return {}
+        status = {}
     with open(STATUS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+        status = json.load(f)
 
-def save_status(status):
+def save_status():
+    global status
     with open(STATUS_FILE, "w", encoding="utf-8") as f:
         json.dump(status, f)
 
-def load_runs():
+def load_runs(init=False):
     global sid, token, scoreboard_cache, Frozen_flag, fetch_flag
-    if fetch_flag:
+    if fetch_flag and scoreboard_cache["timestamp"] > 0:
         return {"success": True}
     fetch_flag = True
     print("Loading runs from PDOGS...")
@@ -101,6 +104,8 @@ def load_runs():
         res = requests.get(url, headers=headers, timeout=3)
         res.raise_for_status()
         data = res.json()
+        if data["success"] == False:
+            return {"success": False, "error": data["error"]}
         contestTime = data["data"]["time"]["contestTime"]
         timestamp = data["data"]["time"]["timestamp"]
         if Frozen_flag and contestTime <= timestamp:
@@ -119,6 +124,8 @@ def load_runs():
         return {"success": True}
     except Exception as e:
         fetch_flag = False
+        if init:
+            raise e
         return {"success": False, "error": str(e)}
 
 def extract_first_yes_runs(runs):
@@ -134,7 +141,7 @@ def extract_first_yes_runs(runs):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get('logged_in', False):
+        if not session.get('logged_in', False) or session.get('username', None) not in load_accounts():
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
@@ -142,21 +149,21 @@ def login_required(f):
 def login_required_error(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get('logged_in', False):
+        if not session.get('logged_in', False) or session.get('username', None) not in load_accounts():
             return (jsonify({"success": False, "error": "NoPermission"}))
         return f(*args, **kwargs)
     return decorated_function
 
 # flask app routes
 
-@app.route("/balloon")
+@app.route("/pdao_be/balloon", endpoint="index")
 @login_required
 def balloon():
     pro, tem = load_contest_metadata()
     contest_data = {"problems": pro, "teams": tem}
     return render_template("balloon/index.html", contest_data=contest_data, current_user=session.get("username"))
 
-@app.route("/balloon/login", methods=["GET", "POST"])
+@app.route("/pdao_be/balloon/login", methods=["GET", "POST"], endpoint="login")
 def login():
     error = False
     if request.method == "POST":
@@ -167,25 +174,25 @@ def login():
         if username in accounts and accounts[username] == hashlib.sha256(password.encode('utf-8')).hexdigest():
             session['logged_in'] = True
             session['username'] = username
-            return redirect("/balloon")
+            return redirect(url_for('index'))
         error = True
     return render_template("balloon/login.html", error=error)
 
-@app.route("/balloon/logout")
+@app.route("/pdao_be/balloon/logout", endpoint="logout")
 def logout():
     session.pop('logged_in', None)
-    return redirect("login")
+    return redirect(url_for('login'))
 
-@app.route("/balloon/login_status")
+@app.route("/pdao_be/balloon/login_status", endpoint="login_status")
 def login_status():
     return jsonify({"logged_in": session.get('logged_in', False)})
 
-@app.route("/api/contest_data", methods=["GET"])
+@app.route("/pdao_be/api/contest_data", methods=["GET"], endpoint="api-contest_data")
 def contest_data_api():
     global contest_data
     return jsonify(contest_data)
 
-@app.route("/api/account_modify", methods=["POST"])
+@app.route("/pdao_be/api/account_modify", methods=["POST"], endpoint="api-account_modify")
 @login_required
 def add_account():
     data = request.json
@@ -200,7 +207,7 @@ def add_account():
     save_accounts(accounts)
     return jsonify({"success": True, "method": "edit" if exist else "add"})
 
-@app.route("/api/account/delete", methods=["POST"])
+@app.route("/pdao_be/api/account_delete", methods=["POST"], endpoint="api-account_delete")
 @login_required
 def delete_account():
     username = session.get("username")
@@ -218,37 +225,37 @@ def delete_account():
         return jsonify({"success": True})
     return jsonify({"success": False, "error": "Account not found"}), 404
 
-@app.route("/api/runs")
+@app.route("/pdao_be/api/runs", methods=["GET"], endpoint="api-runs")
 def get_runs():
     global scoreboard_cache
     now = time.time()
     if now - scoreboard_cache["timestamp"] < 1.5:
         return jsonify(scoreboard_cache["data"])
-    if load_runs().get("success"):
+    status = load_runs()
+    if status.get("success"):
         return jsonify(scoreboard_cache["data"])
     else:
-        return jsonify({"success": False, "error": "Failed to load runs"}), 500
+        return jsonify({"success": False, "error": ("Failed to load runs error: " + status["error"])}), 500
 
-@app.route("/api/runs/balloon")
+@app.route("/pdao_be/api/runs/balloon", methods=["GET"], endpoint="api-runs_balloon")
 @login_required_error
 def api_runs():
-    global scoreboard_cache
-    status = load_status()
+    global scoreboard_cache, status
     problem_meta, team_info = load_contest_metadata()
     if time.time() - scoreboard_cache["timestamp"] < 1:
         data = scoreboard_cache["data"]
     else:
-        if load_runs().get("success"):
+        runs_status = load_runs()
+        if runs_status.get("success", False):
             data = scoreboard_cache["data"]
         else:
-            return jsonify({"success": False, "error": "Failed to load runs"}, 500)
+            return jsonify({"success": False, "error": ("Failed to load runs error: " + runs_status["error"])}), 500
     runs = data["data"]["runs"]
     yes_runs = extract_first_yes_runs(runs)
 
     for run in yes_runs:
         prob_info = problem_meta.get(run["problem"], {})
         team = team_info.get(run["team"], {})
-        run["id"] = run["id"]
         run["color"] = prob_info.get("color", "gray")
         run["problem_label"] = prob_info.get("name", "?")
         run["team_name"] = team.get("name", f"Team {run['team']}")
@@ -256,32 +263,31 @@ def api_runs():
         run["team_section"] = team.get("section", "??")
         run["made"] = status.get(str(run["id"]), {}).get("made", False)
         run["sent"] = status.get(str(run["id"]), {}).get("sent", False)
-
+    
     return jsonify({"success": True, "error": "Null", "data": yes_runs})
 
-@app.route("/api/update_status", methods=["POST"])
+@app.route("/pdao_be/api/update_status", methods=["POST"], endpoint="api-update_status")
 @login_required
 def update_status():
+    global status
     run_id = str(request.json.get("id"))
     field = request.json.get("field")  # 'made' or 'sent'
     value = bool(request.json.get("value"))
-
-    status = load_status()
     if run_id not in status:
         status[run_id] = {"made": False, "sent": False}
     if field == "made":
         status[run_id]["sent"] = False
     status[run_id][field] = value
-    save_status(status)
+    save_status()
     return jsonify({"success": True})
 
-@app.route("/api/frozen", methods=["GET"])
+@app.route("/pdao_be/api/frozen", methods=["GET"], endpoint="api-frozen_get")
 @login_required
 def frozen_status():
     global Frozen_flag
     return jsonify({"status": "True" if Frozen_flag else "False"})
 
-@app.route("/api/frozen", methods=["POST"])
+@app.route("/pdao_be/api/frozen", methods=["POST"], endpoint="api-frozen_post")
 @login_required
 def frozen():
     global Frozen_flag, scoreboard_cache
@@ -296,7 +302,8 @@ if __name__ == "__main__":
         load_accounts()
         load_runs()
         load_contest_metadata()
+        load_status()
     except Exception as e:
         print(f"Error loading configuration: {e}")
         exit(1)
-    app.run(host="0.0.0.0", port=3001, debug=False)
+    app.run(host="0.0.0.0", port=3001, debug=True)

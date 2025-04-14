@@ -23,7 +23,7 @@
       <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#accountModal">
         管理帳號
       </button>
-      <a class="btn btn-outline-secondary btn-sm" href="/balloon/logout">登出</a>
+      <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('logout') }}">登出</a>
     </div>
   </div>  
 </nav>
@@ -152,7 +152,7 @@
 
   function updateStatus(id, field, value) {
     return $.ajax({
-      url: '/api/update_status',
+      url: "{{ url_for('api-update_status') }}",
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ id, field, value })
@@ -161,11 +161,11 @@
 
   // 渲染氣球製作狀態
   function renderRuns() {
-    $.getJSON('/api/runs/balloon', function (res) {
+    $.getJSON("{{ url_for('api-runs_balloon') }}", function (res) {
       if(res.success != true){
         if(res.error == "NoPermission"){
           alert("請重新登入。");
-          window.location.href = "/balloon/login";
+          window.location.href = "{{ url_for('login') }}";
           return;
         }
         return
@@ -240,7 +240,7 @@
       }
 
     $.ajax({
-      url: '/api/account_modify',
+      url: "{{ url_for('api-account_modify') }}",
       method: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({ username, password }),
@@ -263,16 +263,16 @@
   // 刪除帳號按鈕行為
   function deleteAcct() {
     if (confirm('確定要刪除目前帳號？此動作無法復原')) {
-    $.post('/api/account/delete')
+    $.post("{{ url_for('api-account_delete') }}")
       .done((res) => {
         alert('帳號已刪除，將登出...');
-        window.location.href = '/balloon/login';
+        window.location.href = "{{ url_for('login') }}";
       })
       .fail((response) => {
         res = response.responseJSON;
         if (res.error == "Not logged in") {
           alert("請重新登入。");
-          window.location.href = "/balloon/login";
+          window.location.href = "login";
         } else if (res.error == "Last account") {
           alert('無法刪除最後一個帳號！');
         } else if (res.error == "Account not found") {
@@ -285,7 +285,7 @@
   }
 
   function pollFrozenStatus() {
-    $.getJSON('/api/frozen', function (res) {
+    $.getJSON("{{ url_for('api-frozen_get') }}", function (res) {
       const frozen = res.status;
       $('#frozenSwitch').prop('checked', (frozen == "True" ?"true": ""));
     });
@@ -302,7 +302,7 @@
 
     if (confirm(message)) {
       $.ajax({
-        url: '/api/frozen',
+        url: "{{ url_for('api-frozen_post') }}",
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({ frozen: isChecked }),

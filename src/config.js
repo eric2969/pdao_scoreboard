@@ -36,8 +36,8 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    apiBase : "http://49.158.179.101:3001/api/runs",
-    contestData : "http://49.158.179.101:3001/api/contest_data",
+    apiBase : "http://localhost:3001/pdao_be/api/runs",
+    contestData : "http://localhost:3001/pdao_be/api/contest_data",
 
     /**
      * Specify whether to use automatically diff and feed updated runs.
