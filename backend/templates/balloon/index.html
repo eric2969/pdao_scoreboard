@@ -20,6 +20,7 @@
         <label class="form-check-label ms-2" for="frozenSwitch">記分板封板</label>
       </div>
       <div style="width: 1px; height: 30px; background-color: #ccc;"></div>
+      <span class="navbar-text me-2">您好: {{ current_user }}</span>
       <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#accountModal">
         管理帳號
       </button>
@@ -230,6 +231,11 @@
   $(renderRuns);
   setInterval(renderRuns, 1500);
 
+  $('#accountModal').on('show.bs.modal', function () {
+    $('#username').val('{{ current_user }}');
+    $('#password').val('');
+    $('#accountForm').off('submit'); // 移除之前的 submit 事件處理器
+  });
   $('#accountForm').on('submit', function (e) {
       e.preventDefault();
       const username = $('#username').val().trim();
@@ -254,9 +260,6 @@
       error: function (xhr) {
           alert('帳號新增失敗');
       }
-    });
-    $('#accountModal').on('show.bs.modal', function () {
-      $('#username').val('{{ current_user }}');
     });
   });
 
@@ -291,7 +294,7 @@
     });
   }
   $(pollFrozenStatus);
-  setInterval(pollFrozenStatus, 2000); // 每 2 秒檢查一次凍結狀態
+  setInterval(pollFrozenStatus, 1000); // 每 2 秒檢查一次凍結狀態
   // 用戶手動切換凍結狀態
   $('#frozenSwitch').on('change', function (e) {
     const isChecked = $(this).prop('checked');
