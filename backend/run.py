@@ -2,10 +2,13 @@ from flask import Flask, render_template, request, redirect, jsonify, session, u
 from functools import wraps
 from flask_cors import CORS
 import requests, json, os, re, hashlib, time
+from datetime import datetime
+
 
 app = Flask(__name__, static_url_path='/pdao_be/static')
 CORS(app, resources={r"/pdao_be/api/*": {"origins": "*"}})
-app.secret_key = os.urandom(24)  # Generate a random secret key for session management
+
+app.secret_key = hashlib.sha256(("PDAO2025" + datetime.now().strftime('%Y-%m-%d-%H')).encode('utf-8')).hexdigest()
 
 STATUS_FILE = "backend_file/status.json"
 ACCOUNT_FILE = "backend_file/account.json"
@@ -296,7 +299,7 @@ def frozen():
     return jsonify({"Success": "True", "status": "True" if Frozen_flag else "False"})
 
 
-if __name__ == "__main__":
+def initialize():
     try:
         load_config()
         load_accounts()
@@ -306,4 +309,8 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error loading configuration: {e}")
         exit(1)
+
+initialize()
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3001, debug=True)
