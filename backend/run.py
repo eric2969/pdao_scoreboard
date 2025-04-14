@@ -307,7 +307,6 @@ def frozen():
     save_frozen(Frozen_flag)
     return jsonify({"Success": "True", "status": "True" if Frozen_flag else "False"})
 
-
 def Initialize():
     try:
         load_config()
