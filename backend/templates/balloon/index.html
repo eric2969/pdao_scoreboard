@@ -233,17 +233,12 @@
   $('#accountModal').on('show.bs.modal', function () {
     $('#username').val('{{ current_user }}');
     $('#password').val('');
-    $('#accountForm').off('submit'); // 移除之前的 submit 事件處理器
   });
-  $('#accountForm').on('submit', function (e) {
-      e.preventDefault();
-      const username = $('#username').val().trim();
-      const password = $('#password').val().trim();
-      if (!username || !password) {
-        alert('請輸入帳號與密碼');
-        return;
-      }
 
+  $('#accountForm').on('submit', function (e) {
+    e.preventDefault();
+    const username = $('#username').val();
+    const password = $('#password').val();
     $.ajax({
       url: "{{ url_for('api-account_modify') }}",
       method: 'POST',
