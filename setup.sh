@@ -1,7 +1,7 @@
 echo "Installing Dependencies..."
 sudo apt update
 sudo apt upgrade
-sudo apt install nodejs npm tmux python3-flask python3-flask-cors python3-requests python3-hashlib gunicorn -y
+sudo apt install nodejs npm tmux python3-flask python3-flask-cors python3-requests gunicorn -y
 echo "Dependencies installed successfully!"
 echo "Initializing system data..."
 cd BuildTool
