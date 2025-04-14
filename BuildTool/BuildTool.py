@@ -92,7 +92,8 @@ def Create_CreditFiles():
     Chk_Token()
     data = {
         "sid": sid,
-        "token": headers["auth-token"]
+        "token": headers["auth-token"],
+        "frozen": True
     }
     with open(scoreboard_path, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)

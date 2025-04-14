@@ -2,47 +2,61 @@ from flask import Flask, render_template, request, redirect, jsonify, session, u
 from functools import wraps
 from flask_cors import CORS
 import requests, json, os, re, hashlib, time
+from datetime import datetime
 
 app = Flask(__name__, static_url_path='/pdao_be/static')
 CORS(app, resources={r"/pdao_be/api/*": {"origins": "*"}})
-app.secret_key = os.urandom(24)  # Generate a random secret key for session management
+app.secret_key = hashlib.sha256(("PDAO"+datetime.now().strftime('%Y-%m-%d-%H')).encode('utf-8')).hexdigest()
 
 STATUS_FILE = "backend_file/status.json"
 ACCOUNT_FILE = "backend_file/account.json"
-
-config_path = "backend_file/scoreboard.json"
-data_path = "backend_file/contest_data.json"
+CONFIG_PATH = "backend_file/scoreboard.json"
+DATA_PATH = "backend_file/contest_data.json"
 
 # config data
-Frozen_flag = True
-sid = None
-token = None
-scoreboard_cache = {"data": None, "timestamp": 0}
 fetch_flag = False
+scoreboard_cache = {"data": None, "timestamp": 0}
 contest_data = None
-status = None
+sid, token = None, None
 
 # 讀取配置檔案
 def load_config():
     global sid, token, contest_data
     try:
-        with open(config_path, "r", encoding="utf-8") as f:
+        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
             config = json.load(f)
     except FileNotFoundError:
-        raise FileNotFoundError(f"Configuration file '{config_path}' not found.")
+        raise FileNotFoundError(f"Configuration file '{CONFIG_PATH}' not found.")
     except json.JSONDecodeError:
-        raise ValueError(f"Configuration file '{config_path}' is not valid JSON.")
+        raise ValueError(f"Configuration file '{CONFIG_PATH}' is not valid JSON.")
     if not config.get("sid") or not config.get("token"):
         raise ValueError("Invalid configuration: 'sid' and 'token' are required.")
     try:
-        with open(data_path, "r", encoding="utf-8") as f:
+        with open(DATA_PATH, "r", encoding="utf-8") as f:
             contest_data = json.load(f)
     except FileNotFoundError:
-        raise FileNotFoundError(f"Contest data file '{data_path}' not found.")
+        raise FileNotFoundError(f"Contest data file '{DATA_PATH}' not found.")
     except json.JSONDecodeError:
-        raise ValueError(f"Contest data file '{data_path}' is not valid JSON.")
+        raise ValueError(f"Contest data file '{DATA_PATH}' is not valid JSON.")
     sid = config.get("sid")
     token = config.get("token")
+
+# 載入封板狀態
+def load_frozen():
+    try:
+        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        return config.get("frozen", True)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Configuration file '{CONFIG_PATH}' not found.")
+    except json.JSONDecodeError:
+        raise ValueError(f"Configuration file '{CONFIG_PATH}' is not valid JSON.")
+
+def save_frozen(frozen):
+    global sid, token
+    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
+        config = {"sid": sid, "token": token, "frozen": frozen}
+        json.dump(config, f, indent=2)
 
 # 載入帳號資料
 def load_accounts():
@@ -78,18 +92,16 @@ def load_contest_metadata():
         return []
 
 def load_status():
-    global status
     if not os.path.exists(STATUS_FILE):
-        status = {}
+        return {}
     with open(STATUS_FILE, "r", encoding="utf-8") as f:
-        status = json.load(f)
+        return json.load(f)
 
-def save_status():
-    global status
+def save_status(status):
     with open(STATUS_FILE, "w", encoding="utf-8") as f:
         json.dump(status, f)
 
-def load_runs(init=False):
+def load_runs():
     global sid, token, scoreboard_cache, Frozen_flag, fetch_flag
     if fetch_flag and scoreboard_cache["timestamp"] > 0:
         return {"success": True}
@@ -108,8 +120,10 @@ def load_runs(init=False):
             return {"success": False, "error": data["error"]}
         contestTime = data["data"]["time"]["contestTime"]
         timestamp = data["data"]["time"]["timestamp"]
+        #if end and flag is frozen
+        Frozen_flag = load_frozen()
         if Frozen_flag and contestTime <= timestamp:
-            left,right = -1, len(data["data"]["runs"])  # 因為要找第一個 >= contestTime
+            left,right = -1, len(data["data"]["runs"])
             while left + 1 < right:
                 mid = (left + right) // 2
                 if data["data"]["runs"][mid]["submissionTime"] * 60 + 3600 > contestTime:
@@ -119,13 +133,11 @@ def load_runs(init=False):
             for i in range(left+1, len(data["data"]["runs"])):
                 data["data"]["runs"][i]["result"] = "Pending"
         scoreboard_cache["data"] = data
-        scoreboard_cache["timestamp"] = time.time()
+        scoreboard_cache["timestamp"] = int(time.time())
         fetch_flag = False
         return {"success": True}
     except Exception as e:
         fetch_flag = False
-        if init:
-            raise e
         return {"success": False, "error": str(e)}
 
 def extract_first_yes_runs(runs):
@@ -228,8 +240,7 @@ def delete_account():
 @app.route("/pdao_be/api/runs", methods=["GET"], endpoint="api-runs")
 def get_runs():
     global scoreboard_cache
-    now = time.time()
-    if now - scoreboard_cache["timestamp"] < 1.5:
+    if int(time.time()) - scoreboard_cache["timestamp"] <= 1:
         return jsonify(scoreboard_cache["data"])
     status = load_runs()
     if status.get("success"):
@@ -240,9 +251,9 @@ def get_runs():
 @app.route("/pdao_be/api/runs/balloon", methods=["GET"], endpoint="api-runs_balloon")
 @login_required_error
 def api_runs():
-    global scoreboard_cache, status
+    global scoreboard_cache
     problem_meta, team_info = load_contest_metadata()
-    if time.time() - scoreboard_cache["timestamp"] < 1:
+    if int(time.time()) - scoreboard_cache["timestamp"] <= 1:
         data = scoreboard_cache["data"]
     else:
         runs_status = load_runs()
@@ -252,7 +263,7 @@ def api_runs():
             return jsonify({"success": False, "error": ("Failed to load runs error: " + runs_status["error"])}), 500
     runs = data["data"]["runs"]
     yes_runs = extract_first_yes_runs(runs)
-
+    status = load_status()
     for run in yes_runs:
         prob_info = problem_meta.get(run["problem"], {})
         team = team_info.get(run["team"], {})
@@ -269,7 +280,7 @@ def api_runs():
 @app.route("/pdao_be/api/update_status", methods=["POST"], endpoint="api-update_status")
 @login_required
 def update_status():
-    global status
+    status = load_status()
     run_id = str(request.json.get("id"))
     field = request.json.get("field")  # 'made' or 'sent'
     value = bool(request.json.get("value"))
@@ -284,19 +295,20 @@ def update_status():
 @app.route("/pdao_be/api/frozen", methods=["GET"], endpoint="api-frozen_get")
 @login_required
 def frozen_status():
-    global Frozen_flag
+    Frozen_flag = load_frozen()
     return jsonify({"status": "True" if Frozen_flag else "False"})
 
 @app.route("/pdao_be/api/frozen", methods=["POST"], endpoint="api-frozen_post")
 @login_required
 def frozen():
-    global Frozen_flag, scoreboard_cache
+    global scoreboard_cache
     Frozen_flag = request.json.get("frozen", True)
     scoreboard_cache["timestamp"] = -1
+    save_frozen(Frozen_flag)
     return jsonify({"Success": "True", "status": "True" if Frozen_flag else "False"})
 
 
-if __name__ == "__main__":
+def Initialize():
     try:
         load_config()
         load_accounts()
@@ -306,4 +318,8 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Error loading configuration: {e}")
         exit(1)
+
+Initialize()
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3001, debug=True)
