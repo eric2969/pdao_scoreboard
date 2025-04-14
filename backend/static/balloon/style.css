@@ -1,0 +1,81 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+  .container-flex {
+    display: flex;
+    height: calc(100% - 80px); /* 如果 navbar 是 80px 高 */
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .left-scrollable {
+    flex: 4;
+    overflow-y: auto;
+    max-height: 100%;
+    z-index: 1000;
+  }
+  .right-scrollable {
+    flex: 8;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: 0;
+  }
+  .seat {
+    border-radius: 8px;
+    text-align: center;
+    padding: 0.3rem;
+    background-color: #fff;
+    line-height: 1.1;
+    word-wrap: break-word;
+    white-space: normal;
+    font-size: inherit;
+  }
+  .seat-col-label {
+    border-radius: 8px;
+    text-align: center;
+    padding: 0.3rem;
+    background-color: #efefefe1;
+    line-height: 1.1;
+    word-wrap: break-word;
+    white-space: normal;
+    font-size: inherit;
+  }
+  .seat-row-label {
+    border-radius: 8px;
+    text-align: center;
+    padding: 0.3rem;
+    background-color: #efefefe1;
+    line-height: 1.1;
+    word-wrap: break-word;
+    white-space: normal;
+    font-size: inherit;
+    width: 2.5rem;
+  }
+  .seat.occupied {
+    background-color: #e2f0d9;
+  }
+  .seat.occupied:hover {
+    background-color: #d1e7dd;
+    transition: background-color 0.2s ease-in-out;
+  }
+  .seat.vaccant {
+    background-color: #ff989895;
+  }
+  .seat.highlight {
+    background-color: #00fbff !important;
+    border-color: #ff8f00 !important;
+  }
+  .btn-sm { font-size: 0.85rem; }
+
+  .run-pending td{background-color: #ffe5e5 !important;} /* 淺紅色 */
+  .run-pending:hover td{background-color: #f9cfcf !important;} /* 稍深紅色 */
+
+  .run-made td{background-color: #fffacc !important;} /* 淡黃色 */
+  .run-made:hover td{background-color: #fff59d !important;} /* 稍深黃色 */
+
+  .run-sent td{background-color: #e5ffe5 !important;} /* 淡綠色 */
+  .run-sent:hover td{background-color: #c8f7c5 !important;} /* 稍深綠色 */
+  
+  .run-pending td,.run-made td,.run-sent td{ transition: background-color 0.2s ease-in-out !important;}

@@ -36,8 +36,8 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    apiBase : "https://ntu.im/PDAO/runs.php",
-    contestData : "./contest_data.json",
+    apiBase : "http://49.158.179.101:3001/api/runs",
+    contestData : "http://49.158.179.101:3001/api/contest_data",
 
     /**
      * Specify whether to use automatically diff and feed updated runs.

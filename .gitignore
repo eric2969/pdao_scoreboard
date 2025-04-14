@@ -42,4 +42,5 @@ src/credit/*
 #contest file
 src/contest_data.json
 
-balloon/backend_file/*
+backend/backend_file
+backend/logs/

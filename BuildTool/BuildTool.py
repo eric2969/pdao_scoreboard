@@ -1,4 +1,4 @@
-import os, csv, json, requests, hashlib
+import os, csv, json, requests, hashlib, shutil
 
 sid = ""
 headers = ""
@@ -51,15 +51,22 @@ def Loading_Json(problems_csv, teams_csv):
             teams.append({
                 "id": int(row["id"]),
                 "name": (row["name"].replace('(', '（').replace(')', '）') + " (" + row["school"] + ")"),
-                "position": row["position"],
+                "position": row["position"] if row["position"] != "" else "??",
+                "section": row["section"] if row["section"] != "" else "??",
             })
     print("Problems and Teams data loaded successfully.")
+
+def Reset_Data():
+    print("Resetting scoreboard and backend files ...")
+    if(os.path.exists("../backend/backend_file")):
+        shutil.rmtree('../backend/backend_file', ignore_errors=True)
+    os.mkdir("../backend/backend_file")
 
 def Create_ContestData():
     global problems, teams
     title = input("\nPlease enter the contest title: ")
     print("Creating contest data ...")
-    json_file_path = "../contest_data.json"
+    json_file_path = "../backend/backend_file/contest_data.json"
     data = {
         "title": title,
         "systemName": "PDOGS",
@@ -70,40 +77,38 @@ def Create_ContestData():
     with open(json_file_path, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
     print(f"Problems and Teams files have been converted to JSON file '{json_file_path}'.")
-    print("Please check the data contest_data.json at ../contest_data.json.")
+    print("Please check the data contest_data.json at backdend_file in backend.")
 
 def Create_CreditFiles():
     global headers, sid
+    scoreboard_path = "../backend/backend_file/scoreboard.json"
     if sid == "":
-        sid = input("\nEnter the scoreboard id from PDOGS: ")
+        while True:
+            sid = input("\nEnter the scoreboard id from PDOGS: ")
+            if sid == "" or int(sid) <= 0:
+                print("Scoreboard id cannot be empty. Please enter a valid one.")
+                continue
+            break
     Chk_Token()
-    if not os.path.exists("../credit"):
-        os.makedirs("../credit")
-    sid_path = "../credit/sid.txt"
-    token_path = "../credit/auth-token.txt"
-    with open(sid_path, mode='w', encoding='utf-8') as sid_file:
-        sid_file.write(sid)
-    with open(token_path, mode='w', encoding='utf-8') as toekn_file:
-        toekn_file.write(headers["auth-token"])
+    data = {
+        "sid": sid,
+        "token": headers["auth-token"]
+    }
+    with open(scoreboard_path, mode='w', encoding='utf-8') as json_file:
+        json.dump(data, json_file, indent=4, ensure_ascii=False)
     print("Credit files have been created successfully.")
 
-def Set_Unlock_Token():
+def Reset_BU_Account():
     while True:
-        token = input("\nPlease enter the unlock token(length must in [8,20]): ")
+        token = input("\nPlease enter the password for backend utility default account(Name: PDAO)(length must in [8,20]): ")
         if len(token) < 8 or len(token) > 20:
             print("Unlock token length must be between 8 and 20 characters. Please enter a valid one.")
             continue
         break
-    if not os.path.exists("../credit"):
-        os.makedirs("../credit")
-    Unlock_token_path = "../credit/Unlock-token.txt"
-    lock_flag_path = "../credit/lock_flag.txt"
-    hashed_token = hashlib.sha256(token.encode('utf-8')).hexdigest()
-    with open(lock_flag_path, mode='w', encoding='utf-8') as lock_flag_file:
-        lock_flag_file.write("true")
-    os.chmod("../credit/lock_flag.txt", 0o777)
-    with open(Unlock_token_path, mode='w', encoding='utf-8') as token_file:
-        token_file.write(hashed_token)
+    data = { "PDAO": hashlib.sha256(token.encode()).hexdigest()}
+    acct_path = "../backend/backend_file/account.json"
+    with open(acct_path, mode='w', encoding='utf-8') as json_file:
+        json.dump(data, json_file, indent=4, ensure_ascii=False)
     print("Unlock token has been created successfully, scoreboard has applied frozen lock.")
 
 def Edit_Scoreboard():
@@ -202,18 +207,28 @@ def Edit_LazyJudge():
             return
     print("\nLazy judge has been updated successfully.")
 
-print("Welcome to the PDOGS scoreboard tool!\nLoading Problems and Teams data ...")
-problem_csv = "ProblemsData.csv"
-teams_csv = "TeamsData_official.csv"
+print("Welcome to the PDOGS scoreboard tool!")
+print("Loading Problems and Teams data ...")
+problem_csv = "ProblemsData_test.csv"
+teams_csv = "TeamsData.csv"
 if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)
 while True:
     type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Set Scoreboard Frozen Lock\n7. Exit\nEnter your choice: "))
     if type == 1:
+        while True:
+            confirm = input("\nThis will reset scoreboard/BU and backend files. Do you want to continue? (y/n): ").strip().lower()
+            if confirm == 'y':
+                print("Continuing ...")
+                break
+            elif confirm == 'n':
+                print("Exiting the program.")
+                exit(0)
+        Reset_Data()
         Create_ContestData()
         Create_CreditFiles()
-        Set_Unlock_Token()
+        Reset_BU_Account()
         Edit_Scoreboard()
         Edit_LazyJudge()
         print("Setup completed successfully.")
@@ -228,7 +243,7 @@ while True:
     elif type == 5:
         Edit_LazyJudge()
     elif type == 6:
-        Set_Unlock_Token()
+        Reset_BU_Account()
     elif type == 7:
         print("Exiting the program.")
         break
