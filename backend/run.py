@@ -289,7 +289,7 @@ def update_status():
     if field == "made":
         status[run_id]["sent"] = False
     status[run_id][field] = value
-    save_status()
+    save_status(status)
     return jsonify({"success": True})
 
 @app.route("/pdao_be/api/frozen", methods=["GET"], endpoint="api-frozen_get")
