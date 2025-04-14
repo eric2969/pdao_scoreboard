@@ -106,7 +106,6 @@ def load_runs():
     if fetch_flag and scoreboard_cache["timestamp"] > 0:
         return {"success": True}
     fetch_flag = True
-    print("Loading runs from PDOGS...")
     try:
         url = f"https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/{sid}/runs"
         headers = {
