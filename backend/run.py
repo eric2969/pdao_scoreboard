@@ -2,11 +2,12 @@ from flask import Flask, render_template, request, redirect, jsonify, session, u
 from functools import wraps
 from flask_cors import CORS
 import requests, json, os, re, hashlib, time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__, static_url_path='/pdao_be/static')
 CORS(app, resources={r"/pdao_be/api/*": {"origins": "*"}})
 app.secret_key = hashlib.sha256("PDAOiiaioiiiai".encode('utf-8')).hexdigest()
+app.permanent_session_lifetime = timedelta(minutes=10)
 
 STATUS_FILE = "backend_file/status.json"
 ACCOUNT_FILE = "backend_file/account.json"
