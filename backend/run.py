@@ -175,6 +175,14 @@ def balloon():
     contest_data = {"problems": pro, "teams": tem}
     return render_template("balloon/index.html", contest_data=contest_data, current_user=session.get("username"))
 
+@app.route("/pdao_be/ballon/statistics", endpoint="stat")
+@login_required
+def statistics():
+    sec = request.args.get("sec")
+    if sec is None:
+        sec = "pro"
+    return render_template("balloon/stat.html", contest_data=contest_data, current_user=session.get("username"), req_sec = sec)
+
 @app.route("/pdao_be/balloon/login", methods=["GET", "POST"], endpoint="login")
 def login():
     error = False
@@ -186,7 +194,7 @@ def login():
         if username in accounts and accounts[username] == hashlib.sha256(password.encode('utf-8')).hexdigest():
             session['logged_in'] = True
             session['username'] = username
-            return redirect(url_for('index'))
+            return redirect(url_for("index"))  # 預設回首頁
         error = True
     return render_template("balloon/login.html", error=error)
 
@@ -197,7 +205,8 @@ def logout():
 
 @app.route("/pdao_be/balloon/login_status", endpoint="login_status")
 def login_status():
-    return jsonify({"logged_in": session.get('logged_in', False)})
+    status = session.get('logged_in', False) and session.get('username', None) in load_accounts()
+    return jsonify({"logged_in": status, "username": session.get("username", None)})
 
 @app.route("/pdao_be/api/contest_data", methods=["GET"], endpoint="api-contest_data")
 def contest_data_api():

@@ -56,12 +56,22 @@ html, body {
   .seat.occupied {background-color: #e2f0d9;}
   .seat.occupied:hover {
     background-color: #d1e7dd;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.3s ease-in-out;
   }
   .seat.vaccant {background-color: #ff989895;}
-  .seat.highlight {background-color: #00fbff !important;}
-  .seat.selected {background-color: #ffc107 !important;} /* 橘黃色，選取用 */
-
+  .seat.highlight {
+    background-color: #00fbff !important;
+    transition: background-color 0.3s ease-in-out;
+  }
+  .seat.selected {background-color: #ffe436 !important;} /* 橘黃色，選取用 */
+  .seat.selected:hover {
+    background-color: #ffbb00 !important;
+    transition: background-color 0.3s ease-in-out;
+  }
+  .seat.highlight.selected {
+    background-color: #19c2fa !important;
+    transition: background-color 0.3s ease-in-out;
+  }
   .btn-sm { font-size: 0.85rem; }
 
   .run-pending td{background-color: #ffe5e5 !important;} /* 淺紅色 */
@@ -73,4 +83,4 @@ html, body {
   .run-sent td{background-color: #e5ffe5 !important;} /* 淡綠色 */
   .run-sent:hover td{background-color: #c8f7c5 !important;} /* 稍深綠色 */
   
-  .run-pending td,.run-made td,.run-sent td{ transition: background-color 0.2s ease-in-out !important;}
+  .run-pending td,.run-made td,.run-sent td{ transition: background-color 0.3s ease-in-out !important;}
