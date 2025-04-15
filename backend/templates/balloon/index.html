@@ -172,6 +172,8 @@
       }
       runs = res.data;
       const $tbody = $('#runs-body').empty();
+      const selectedPos = $('.seat.selected').data('position') || null;
+
       runs.reverse();
       $.each(runs, function (_, run) {
         if(run.team_position == "??")
@@ -210,7 +212,7 @@
             statusClass = 'run-sent';
 
           const $row = $(`
-            <tr class="${statusClass}">
+            <tr class="${statusClass}" data-position="${run.team_position}">
               <td>${run.id}</td>
               <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${run.team_name}</td>
               <td>${run.team_section}</td>
@@ -223,12 +225,19 @@
           $row.append($(`<td>`).append(madeBtn));
           $row.append($(`<td>`).append(sendBtn));
           $tbody.append($row);
+
+          if (selectedPos) {
+            $('#runs-body tr').each(function () {
+              const rowPos = $(this).data('position');
+              if (rowPos !== selectedPos) $(this).hide();
+            });
+          }
       });
     });
   }
 
   $(renderRuns);
-  setInterval(renderRuns, 1500);
+  setInterval(renderRuns, 1200);
 
   $('#accountModal').on('show.bs.modal', function () {
     $('#username').val('{{ current_user }}');
@@ -309,6 +318,39 @@
         error: () => alert('切換失敗')
       });
     }
+  });
+  // 點擊座位時，顯示該隊伍的詳細資訊
+  // 滑鼠移過座位時高亮（但不改變選取狀態）
+  $('.seat.occupied').on('mouseenter', function () {
+    $(this).addClass('highlight');
+  }).on('mouseleave', function () {
+    $(this).removeClass('highlight');
+  });
+
+  // 點擊座位 → 選取並篩選左側氣球紀錄
+  $('.seat.occupied').on('click', function () {
+    const selectedPos = $(this).data('position');
+
+    // 如果已經是選取狀態，則取消選取並恢復全部顯示
+    if ($(this).hasClass('selected')) {
+      $('.seat').removeClass('selected');
+      $('#runs-body tr').show();
+      return;
+    }
+
+    // 清除其他選取，再設定目前為選取
+    $('.seat').removeClass('selected');
+    $(this).addClass('selected');
+
+    // 篩選左側表格，只顯示該位置的資料
+    $('#runs-body tr').each(function () {
+      const rowPos = $(this).data('position');
+      if (rowPos === selectedPos) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
   });
 </script>
 </body>

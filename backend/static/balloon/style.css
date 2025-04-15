@@ -53,20 +53,15 @@ html, body {
     font-size: inherit;
     width: 2.5rem;
   }
-  .seat.occupied {
-    background-color: #e2f0d9;
-  }
+  .seat.occupied {background-color: #e2f0d9;}
   .seat.occupied:hover {
     background-color: #d1e7dd;
     transition: background-color 0.2s ease-in-out;
   }
-  .seat.vaccant {
-    background-color: #ff989895;
-  }
-  .seat.highlight {
-    background-color: #00fbff !important;
-    border-color: #ff8f00 !important;
-  }
+  .seat.vaccant {background-color: #ff989895;}
+  .seat.highlight {background-color: #00fbff !important;}
+  .seat.selected {background-color: #ffc107 !important;} /* 橘黃色，選取用 */
+
   .btn-sm { font-size: 0.85rem; }
 
   .run-pending td{background-color: #ffe5e5 !important;} /* 淺紅色 */

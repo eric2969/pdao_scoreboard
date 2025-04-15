@@ -6,7 +6,7 @@ from datetime import datetime
 
 app = Flask(__name__, static_url_path='/pdao_be/static')
 CORS(app, resources={r"/pdao_be/api/*": {"origins": "*"}})
-app.secret_key = hashlib.sha256(("PDAO"+datetime.now().strftime('%Y-%m-%d-%H')).encode('utf-8')).hexdigest()
+app.secret_key = hashlib.sha256("PDAOiiaioiiiai".encode('utf-8')).hexdigest()
 
 STATUS_FILE = "backend_file/status.json"
 ACCOUNT_FILE = "backend_file/account.json"
@@ -239,7 +239,7 @@ def delete_account():
 @app.route("/pdao_be/api/runs", methods=["GET"], endpoint="api-runs")
 def get_runs():
     global scoreboard_cache
-    if int(time.time()) - scoreboard_cache["timestamp"] <= 1:
+    if int(time.time()) - scoreboard_cache["timestamp"] < 1:
         return jsonify(scoreboard_cache["data"])
     status = load_runs()
     if status.get("success"):
@@ -252,7 +252,7 @@ def get_runs():
 def api_runs():
     global scoreboard_cache
     problem_meta, team_info = load_contest_metadata()
-    if int(time.time()) - scoreboard_cache["timestamp"] <= 1:
+    if int(time.time()) - scoreboard_cache["timestamp"] < 1:
         data = scoreboard_cache["data"]
     else:
         runs_status = load_runs()
