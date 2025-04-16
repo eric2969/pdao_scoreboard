@@ -44,7 +44,7 @@
 
 <div class="container-flex">
   <div class="left-scrollable">
-    <table class="table table-bordered align-middle text-center bg-white">
+    <table id="balloon_rec" class="table table-bordered align-middle text-center bg-white" style="display: none;">
       <thead class="table-light" style="position: sticky; top: 0; z-index: 10; background-color: white;">
         <tr>
           <th>ID</th>
@@ -59,6 +59,10 @@
       </thead>
       <tbody id="runs-body"></tbody>
     </table>
+    <div id="loading" class="d-flex flex-column justify-content-center align-items-center" style="height: 80vh;">
+      <div class="spinner-border text-primary" role="status"></div>
+      <span class="mt-3 fw-bold">Loading...</span>
+    </div>
   </div>
   <div class="right-scrollable">
     <h4 class="text-center mb-2">
@@ -251,6 +255,9 @@
           $row.append($(`<td>`).append(madeBtn));
           $row.append($(`<td>`).append(sendBtn));
           $tbody.append($row);
+          
+          $("#balloon_rec").show();
+          $("#loading").removeClass("d-flex").addClass("d-none");
 
           if (shouldShow)
             $row.show();
