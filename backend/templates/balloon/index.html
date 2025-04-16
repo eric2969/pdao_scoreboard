@@ -177,7 +177,7 @@
   }
 
   function timeformat(time) {
-    const hours = String(parseInt(time / 3600) % 24).padStart(2, '0');
+    const hours = String(parseInt(time / 3600)).padStart(2, '0');
     const minutes = String(parseInt(time / 60) % 60).padStart(2, '0');
     const seconds = String(parseInt(time % 60)).padStart(2, '0');
     return `${hours}:${minutes}:${seconds}`;
