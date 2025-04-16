@@ -195,7 +195,7 @@
           const runs = res.data.runs || {};
           const SolvedSet = new Set();
           const problemStats = {};
-          contestData.teams.forEach(t => {teamStats[t.id] = {solved: 0, attempts: 0, penalty: 0, rank: 0};});
+          contestData.teams.forEach(t => {teamStats[t.id] = {solved: [], attempts: {}, penalty: 0, rank: 0};});
           runs.forEach(run => {
             const pid = run.problem;
             const tid = run.team;
@@ -210,19 +210,19 @@
             if(run.result && run.result.startsWith("Yes")) {
               if (!problemStats[pid])
                 problemStats[pid] = {solves: 1, first: tname, ftime: run.submissionTime};
-              else if(!SolvedSet.has((pid, tid)))
+              else if(!SolvedSet.has(String(pid)+" "+String(tid)))
                 problemStats[pid].solves++;
             }
 
             // 隊伍統計
             if (run.result && run.result.startsWith("Yes")) {
-              if(!SolvedSet.has((pid, tid))) {
-                SolvedSet.add((pid, tid));
-                teamStats[tid].solved++;
-                teamStats[tid].penalty += run.submissionTime + teamStats[tid].attempts * 20;
+              if(!SolvedSet.has(String(pid)+" "+String(tid))) {
+                SolvedSet.add(String(pid)+" "+String(tid));
+                teamStats[tid].solved.push(pid);
+                teamStats[tid].penalty += run.submissionTime + (teamStats[tid].attempts[pid] || 0) * 20;
               }
-            } else if(!SolvedSet.has((pid, tid)))
-              teamStats[tid].attempts++;
+            } else if(!SolvedSet.has(String(pid)+" "+String(tid)))
+              teamStats[tid].attempts[pid] = (teamStats[tid].attempts[pid] || 0) + 1;
           });
 
           // Render 題目統計
@@ -259,8 +259,8 @@
     // 計算排名
     function calculateRank() {
       const sortedTeams = Object.entries(teamStats).sort((a, b) => {
-        if (a[1].solved !== b[1].solved) {
-          return b[1].solved - a[1].solved;
+        if (a[1].solved.length !== b[1].solved.length) {
+          return b[1].solved.length - a[1].solved.length;
         } else if (a[1].penalty !== b[1].penalty) {
           return a[1].penalty - b[1].penalty;
         } else {
@@ -291,13 +291,15 @@
       });
       teamEntries.forEach(([tid, t]) => {
         const tName = teams[tid].name.match(/^([^()]+)\(([^()]*)\)$/);
+        total_attempt = 0;
+        t.solved.forEach((pid) => {total_attempt += (t.attempts[pid] || 0);});
         $('#team-stats').append(`
           <tr>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tid}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40vw;">${tName[1]}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
-            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.solved}</td>
-            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.attempts}</td>
+            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.solved.length}</td>
+            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${total_attempt}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.penalty}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.rank}</td>
           </tr>
@@ -305,7 +307,7 @@
       });
     }
 
-    $('#sort-mode').on('change', function () { renderTeamTable();});
+    $('#sort-mode').on('change', function () {renderTeamTable();});
 
     $('#accountModal').on('show.bs.modal', function () {
     $('#username').val('{{ current_user }}');

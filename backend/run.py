@@ -293,9 +293,7 @@ def frozen_status():
 @app.route("/pdao_be/api/frozen", methods=["POST"], endpoint="api-frozen_post")
 @login_required
 def frozen():
-    global scoreboard_cache
     Frozen_flag = request.json.get("frozen", True)
-    scoreboard_cache["timestamp"] = -1
     save_frozen(Frozen_flag)
     return jsonify({"Success": "True", "status": "True" if Frozen_flag else "False"})
 
