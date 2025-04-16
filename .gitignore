@@ -44,3 +44,4 @@ src/contest_data.json
 
 backend/backend_file
 backend/logs/
+backend/__pycache__

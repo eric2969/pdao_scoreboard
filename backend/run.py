@@ -15,8 +15,6 @@ CONFIG_PATH = "backend_file/scoreboard.json"
 DATA_PATH = "backend_file/contest_data.json"
 
 # config data
-fetch_flag = False
-scoreboard_cache = {"data": None, "timestamp": 0}
 contest_data = None
 sid, token = None, None
 
@@ -103,10 +101,7 @@ def save_status(status):
         json.dump(status, f)
 
 def load_runs():
-    global sid, token, scoreboard_cache, Frozen_flag, fetch_flag
-    if fetch_flag and scoreboard_cache["timestamp"] > 0:
-        return {"success": True}
-    fetch_flag = True
+    global sid, token
     try:
         url = f"https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/{sid}/runs"
         headers = {
@@ -121,8 +116,7 @@ def load_runs():
         contestTime = data["data"]["time"]["contestTime"]
         timestamp = data["data"]["time"]["timestamp"]
         #if end and flag is frozen
-        Frozen_flag = load_frozen()
-        if Frozen_flag and contestTime <= timestamp:
+        if load_frozen() and contestTime <= timestamp:
             left,right = -1, len(data["data"]["runs"])
             while left + 1 < right:
                 mid = (left + right) // 2
@@ -132,12 +126,8 @@ def load_runs():
                     left = mid
             for i in range(left+1, len(data["data"]["runs"])):
                 data["data"]["runs"][i]["result"] = "Pending"
-        scoreboard_cache["data"] = data
-        scoreboard_cache["timestamp"] = int(time.time())
-        fetch_flag = False
-        return {"success": True}
+        return {"success": True, "data": data}
     except Exception as e:
-        fetch_flag = False
         return {"success": False, "error": str(e)}
 
 def extract_first_yes_runs(runs):
@@ -248,28 +238,21 @@ def delete_account():
 
 @app.route("/pdao_be/api/runs", methods=["GET"], endpoint="api-runs")
 def get_runs():
-    global scoreboard_cache
-    if int(time.time()) - scoreboard_cache["timestamp"] < 1:
-        return jsonify(scoreboard_cache["data"])
-    status = load_runs()
-    if status.get("success"):
-        return jsonify(scoreboard_cache["data"])
+    res = load_runs()
+    if res.get("success", False):
+        return jsonify(res.get("data"))
     else:
-        return jsonify({"success": False, "error": ("Failed to load runs error: " + status["error"])}), 500
+        return jsonify(res), 500
 
 @app.route("/pdao_be/api/runs/balloon", methods=["GET"], endpoint="api-runs_balloon")
 @login_required_error
 def api_runs():
-    global scoreboard_cache
     problem_meta, team_info = load_contest_metadata()
-    if int(time.time()) - scoreboard_cache["timestamp"] < 1:
-        data = scoreboard_cache["data"]
+    res = load_runs()
+    if res.get("success", False):
+        data = res.get("data")
     else:
-        runs_status = load_runs()
-        if runs_status.get("success", False):
-            data = scoreboard_cache["data"]
-        else:
-            return jsonify({"success": False, "error": ("Failed to load runs error: " + runs_status["error"])}), 500
+        return jsonify(res), 500
     runs = data["data"]["runs"]
     yes_runs = extract_first_yes_runs(runs)
     status = load_status()

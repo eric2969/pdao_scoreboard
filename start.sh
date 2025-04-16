@@ -7,6 +7,6 @@ cd backend
 if [ ! -d "logs/" ]; then
   mkdir -p "logs/"
 fi
-gunicorn -b 0.0.0.0:$1 --workers=4 --threads=4 server:app \
+gunicorn -b 0.0.0.0:$1 --workers=8 --threads=8 server:app \
   --access-logfile logs/gunicorn_access-$(date +'%Y%m%d_%H%M%S').log \
   --error-logfile logs/gunicorn_error-$(date +'%Y%m%d_%H%M%S').log
