@@ -157,59 +157,71 @@
     $(sec(reqSec));
 
     function renderRuns(){
-      $.getJSON("{{ url_for('api-runs') }}", function (res) {
-        const runs = res.data.runs || {};
-        const SolvedSet = new Set();
-        const problemStats = {};
-        contestData.teams.forEach(t => {teamStats[t.id] = {solved: 0, attempts: 0, penalty: 0, rank: 0};});
-        runs.forEach(run => {
-          const pid = run.problem;
-          const tid = run.team;
-          const probMeta = problems[pid];
-          const teamMeta = teams[tid];
-          const plabel = probMeta.name;
-          const pname = probMeta.title;
-          const tname = teamMeta.name;
-          const tpos = teamMeta.position;
+      $.ajax({
+        url: "{{ url_for('api-runs') }}",
+        method: "GET",
+        dataType: "json",
+        success: function (res) {
+          const runs = res.data.runs || {};
+          const SolvedSet = new Set();
+          const problemStats = {};
+          contestData.teams.forEach(t => {teamStats[t.id] = {solved: 0, attempts: 0, penalty: 0, rank: 0};});
+          runs.forEach(run => {
+            const pid = run.problem;
+            const tid = run.team;
+            const probMeta = problems[pid];
+            const teamMeta = teams[tid];
+            const plabel = probMeta.name;
+            const pname = probMeta.title;
+            const tname = teamMeta.name;
+            const tpos = teamMeta.position;
 
-          // 題目統計
-          if(run.result && run.result.startsWith("Yes")) {
-            if (!problemStats[pid])
-              problemStats[pid] = {solves: 1, first: tname, ftime: run.submissionTime};
-            else if(!SolvedSet.has((pid, tid)))
-              problemStats[pid].solves++;
-          }
-
-          // 隊伍統計
-          if (run.result && run.result.startsWith("Yes")) {
-            if(!SolvedSet.has((pid, tid))) {
-              SolvedSet.add((pid, tid));
-              teamStats[tid].solved++;
-              teamStats[tid].penalty += run.submissionTime + teamStats[tid].attempts * 20;
+            // 題目統計
+            if(run.result && run.result.startsWith("Yes")) {
+              if (!problemStats[pid])
+                problemStats[pid] = {solves: 1, first: tname, ftime: run.submissionTime};
+              else if(!SolvedSet.has((pid, tid)))
+                problemStats[pid].solves++;
             }
-          } else if(!SolvedSet.has((pid, tid)))
-            teamStats[tid].attempts++;
-        });
 
-        // Render 題目統計
-        $('#problem-stats').empty();
-        Object.entries(contestData.problems).forEach(([pid, p]) => {
-          const pStats = problemStats[p.id] || { solves: 0, first: '-', ftime: '-' };
-          const tName = (pStats.first != '-' ?pStats.first.match(/^([^()]+)\(([^()]*)\)$/):['-','-','-']);
-          $('#problem-stats').append(`
-            <tr>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.id}</td>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.name}</td>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${p.title}</td>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pStats.solves}</td>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40vw;">${tName[1]}</td>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
-              <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pStats.ftime}</td>
-            </tr>
-          `);
-        });
-        calculateRank();
-        renderTeamTable();
+            // 隊伍統計
+            if (run.result && run.result.startsWith("Yes")) {
+              if(!SolvedSet.has((pid, tid))) {
+                SolvedSet.add((pid, tid));
+                teamStats[tid].solved++;
+                teamStats[tid].penalty += run.submissionTime + teamStats[tid].attempts * 20;
+              }
+            } else if(!SolvedSet.has((pid, tid)))
+              teamStats[tid].attempts++;
+          });
+
+          // Render 題目統計
+          $('#problem-stats').empty();
+          Object.entries(contestData.problems).forEach(([pid, p]) => {
+            const pStats = problemStats[p.id] || { solves: 0, first: '-', ftime: '-' };
+            const tName = (pStats.first != '-' ?pStats.first.match(/^([^()]+)\(([^()]*)\)$/):['-','-','-']);
+            $('#problem-stats').append(`
+              <tr>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.id}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.name}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${p.title}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pStats.solves}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40vw;">${tName[1]}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pStats.ftime}</td>
+              </tr>
+            `);
+          });
+          calculateRank();
+          renderTeamTable();
+        },
+        error: function (xhr) {
+          if (xhr.status === 500) {
+            console.warn('Server error 500, retrying...');
+            setTimeout(() => renderRuns(), 1000);
+          } else
+            alert('載入資料時發生錯誤，請稍後再試。\n' + xhr.status + ': ' + xhr.statusText);
+        }
       });
     }
     $(renderRuns);

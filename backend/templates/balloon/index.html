@@ -58,7 +58,7 @@
   <div class="right-scrollable">
     <h4 class="text-center mb-2">
       <span style="font-weight: bold;">講台</span>
-      <button class="btn btn-sm btn-outline-secondary" style="float: right; margin-left: 0.5rem;" onclick="window.location.reload()">重置</button>
+      <button class="btn btn-sm btn-outline-secondary" style="float: right; margin-left: 0.5rem;" onclick="SelectReset();">重置</button>
     </h4>
     <div style="display: flex; justify-content: center; align-items: center;">
       <table class="table table-bordered text-center align-middle m-0"
@@ -355,6 +355,11 @@
       }
     });
   });
+
+  function SelectReset() {
+    $(".seat.occupied").removeClass("selected"); // 清除所有選取狀態
+    $('#runs-body tr').show();
+  }
 
 </script>
 </body>
