@@ -13,16 +13,20 @@
   <nav class="navbar navbar-light bg-light shadow-sm mb-4 px-4">
     <div class="container-fluid">
       <a class="navbar-brand mb-0 h4" href="{{ url_for('index') }}">🎈 PDAO Admin</a>
-      <div class="d-flex gap-4">
+      <div class="d-flex gap-3">
         <div style="width: 3px; background-color: #ccc;"></div>
-        <a class="nav-link text-dark fw-bold" href="{{ url_for('index') }}">🏠 主畫面</a>
+        <a class="nav-link text-dark fw-bold" href="{{ url_for('index') }}">🎈氣球分發</a>
         <div style="width: 1px; background-color: #ccc;"></div>
-        <a class="nav-link text-dark fw-bold" href="{{url_for('stat', sec='pro')}}">📘 題目解題統計</a>
+        <a class="nav-link text-dark fw-bold" href="{{url_for('stat', sec='pro')}}">📘題目統計</a>
         <div style="width: 1px; background-color: #ccc;"></div>
-        <a class="nav-link text-dark fw-bold" href="{{url_for('stat', sec='team')}}">👥 隊伍解題統計</a> 
+        <a class="nav-link text-dark fw-bold" href="{{url_for('stat', sec='team')}}">👥隊伍統計</a> 
         <div style="width: 1px; background-color: #ccc;"></div>
       </div>
       <div class="ms-auto d-flex gap-2">
+        <div id="remaining-time" class="badge bg-warning text-dark px-3 py-2 fs-6 fw-bold">
+          剩餘時間：載入中...
+        </div>
+        <div style="width: 1px; background-color: #ccc;"></div>
         <div class="form-check form-switch d-flex align-items-center">
           <input class="form-check-input" type="checkbox" id="frozenSwitch"/>
           <label class="form-check-label ms-2" for="frozenSwitch">記分板封板</label>
@@ -171,6 +175,13 @@
     });
   }
 
+  function timeformat(time) {
+    const hours = String(parseInt(time / 3600) % 24).padStart(2, '0');
+    const minutes = String(parseInt(time / 60) % 60).padStart(2, '0');
+    const seconds = String(parseInt(time % 60)).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
   // 渲染氣球製作狀態
   function renderRuns() {
     $.getJSON("{{ url_for('api-runs_balloon') }}", function (res) {
@@ -245,11 +256,21 @@
           else
             $row.hide();
       });
+      const contestTime = res.time.contestTime;
+      const timestamp = res.time.timestamp;
+      const remain = Math.max(0, contestTime - timestamp);
+      $("#remaining-time").text(`剩餘時間：${timeformat(remain)}`);
+      if (remain <= 0)
+        $("#remaining-time").removeClass("bg-success").removeClass("bg-warning").addClass("bg-danger");
+      else if (remain <= 3600)
+        $("#remaining-time").removeClass("bg-success").addClass("bg-warning").removeClass("bg-danger");
+      else
+        $("#remaining-time").addClass("bg-success").removeClass("bg-warning").removeClass("bg-danger");
     });
   }
 
   $(renderRuns);
-  setInterval(renderRuns, 1200);
+  setInterval(renderRuns, 1000);
 
   $('#accountModal').on('show.bs.modal', function () {
     $('#username').val('{{ current_user }}');

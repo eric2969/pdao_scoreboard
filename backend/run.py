@@ -267,7 +267,7 @@ def api_runs():
         run["made"] = status.get(str(run["id"]), {}).get("made", False)
         run["sent"] = status.get(str(run["id"]), {}).get("sent", False)
     
-    return jsonify({"success": True, "error": "Null", "data": yes_runs})
+    return jsonify({"success": True, "error": "Null", "data": yes_runs, "time": data["data"]["time"]})
 
 @app.route("/pdao_be/api/update_status", methods=["POST"], endpoint="api-update_status")
 @login_required
