@@ -170,13 +170,10 @@ function($, Spotboard) {
           'height': '100%'
         });
       
-        // 插入 spacer
-        const $spacer = $('<li class="runs-spacer" style="height: 7rem; background: transparent; pointer-events: none;"></li>');
-      
-        // 確保不重複插入
-        $runs.find('.runs-spacer').remove();
-        $runs.append($spacer);
-      });
+        $runs.find('.runs-spacer').remove(); // 先移除舊的 spacer
+        const $spacer = $('<li class="runs-spacer" style="height: 7rem; background: transparent;"></li>');
+        $spacer.appendTo($runs);
+    });
 
     return Spotboard.Dashboard;
 
