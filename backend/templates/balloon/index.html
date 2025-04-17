@@ -255,15 +255,17 @@
           $row.append($(`<td>`).append(madeBtn));
           $row.append($(`<td>`).append(sendBtn));
           $tbody.append($row);
-          
-          $("#balloon_rec").show();
-          $("#loading").removeClass("d-flex").addClass("d-none");
-
+        
           if (shouldShow)
             $row.show();
           else
             $row.hide();
       });
+
+      $("#balloon_rec").show();
+      $("#loading").removeClass("d-flex").addClass("d-none");
+
+
       const contestTime = res.time.contestTime;
       const timestamp = res.time.timestamp;
       const remain = Math.max(0, contestTime - timestamp);
