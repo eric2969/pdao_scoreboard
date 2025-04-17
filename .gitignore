@@ -3,6 +3,7 @@ spotboard.github.io
 # Logs
 logs
 *.log
+.out
 npm-debug.log*
 
 # Runtime data

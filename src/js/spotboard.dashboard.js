@@ -161,13 +161,22 @@ function($, Spotboard) {
         $d.attr('data-filter', filter);
     });
 
-    $(document).ready(function() {
-        $('#dashboard > ul.runs').slimScroll({
-            'allowPageScroll' : false,
-            'position' : 'left',
-            'height' : '100%'
+    $(document).ready(function () {
+        const $runs = $('#dashboard > ul.runs');
+      
+        $runs.slimScroll({
+          'allowPageScroll': false,
+          'position': 'left',
+          'height': '100%'
         });
-    });
+      
+        // 插入 spacer
+        const $spacer = $('<li class="runs-spacer" style="height: 7rem; background: transparent; pointer-events: none;"></li>');
+      
+        // 確保不重複插入
+        $runs.find('.runs-spacer').remove();
+        $runs.append($spacer);
+      });
 
     return Spotboard.Dashboard;
 

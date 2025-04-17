@@ -77,7 +77,7 @@ def Create_ContestData():
     with open(json_file_path, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
     print(f"Problems and Teams files have been converted to JSON file '{json_file_path}'.")
-    print("Please check the data contest_data.json at backdend_file in backend.")
+    print("Please make sure to restart the backend server to update contest data.")
 
 def Create_CreditFiles():
     global headers, sid
