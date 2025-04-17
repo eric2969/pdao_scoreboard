@@ -34,6 +34,7 @@ function(Spotboard, $)  {
      * @returns $df deferred object
      * Spotboard.contest 를 새로운 contest context로 set한다.
     */
+    var loadContest_attempt = 0;
     Spotboard.Manager.loadContest = function() {
         var $df = new $.Deferred();
 
@@ -61,7 +62,12 @@ function(Spotboard, $)  {
                 }
             },
             error: function(xhr, stat, err) {
-                return onError(err);
+                if (xhr.status == 500 && loadContest_attempt < 5) {
+                    console.warn('Server Error: ' + xhr.status + ' ' + xhr.statusText);
+                    loadContest_attempt ++;
+                    setTimeout(() => Spotboard.Manager.loadContest(), 1000);
+                } else
+                    return onError(err);
             },
             timeout : Spotboard.config['fetch_timeout'] || 2000,
         });
@@ -76,6 +82,7 @@ function(Spotboard, $)  {
      * @returns $df defered object
      * Spotboard.runfeeder 를 셋한다.
      */
+    var loadRuns_attempt = 0;
     Spotboard.Manager.loadRuns = function() {
         var $df = new $.Deferred();
         var path = Spotboard.config['apiBase']; 
@@ -83,6 +90,7 @@ function(Spotboard, $)  {
             url : path,
             dataType : 'json',
             success: function (e) {
+                loadRuns_attempt = 0;
                 if (e.data.time.NoMoreUpdate) {
                   $df.resolve("success");
                   return;
@@ -91,8 +99,20 @@ function(Spotboard, $)  {
                 $df.resolve("success");
             },
             error : function(xhr, stat, err) {
-                if(console) console.log('Unable to fetch ' + path + ' : ' + err);
-                $df.reject('error');
+                if (xhr.status == 500) {
+                    if(loadRuns_attempt < 5) {
+                        console.warn('Server Error: ' + xhr.status + ' ' + xhr.statusText);
+                        loadRuns_attempt ++;
+                        setTimeout(() => Spotboard.Manager.loadRuns(), 1000);
+                    } else {
+                        if(console) console.log('Unable to fetch ' + path + ' : ' + err);
+                        Spotboard.View.displaySystemMessage('Failed : ' + err, 'red');
+                        $df.reject('error');
+                    }
+                } else {
+                    if(console) console.log('Unable to fetch ' + path + ' : ' + err);
+                    $df.reject('error');
+                }
             }
         });
 
