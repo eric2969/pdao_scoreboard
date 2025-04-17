@@ -10,7 +10,7 @@ html, body {
     gap: 1rem;
   }
   .left-scrollable {
-    flex: 4;
+    flex: 5;
     overflow-y: auto;
     max-height: 100%;
     z-index: 1000;
