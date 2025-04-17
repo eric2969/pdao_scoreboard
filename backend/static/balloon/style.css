@@ -31,6 +31,10 @@ html, body {
     word-wrap: break-word;
     white-space: normal;
     font-size: inherit;
+    user-select: none;
+    -webkit-user-select: none;  /* Chrome/Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Internet Explorer/Edge */
   }
   .seat-col-label {
     border-radius: 8px;
@@ -41,6 +45,10 @@ html, body {
     word-wrap: break-word;
     white-space: normal;
     font-size: inherit;
+    user-select: none;
+    -webkit-user-select: none;  /* Chrome/Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Internet Explorer/Edge */
   }
   .seat-row-label {
     border-radius: 8px;
@@ -52,6 +60,10 @@ html, body {
     white-space: normal;
     font-size: inherit;
     width: 2.5rem;
+    user-select: none;
+    -webkit-user-select: none;  /* Chrome/Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* Internet Explorer/Edge */
   }
   .seat.occupied {background-color: #e2f0d9;}
   .seat.occupied:hover {
