@@ -169,10 +169,7 @@ function($, Spotboard) {
           'position': 'left',
           'height': '100%'
         });
-      
-        $runs.find('.runs-spacer').remove(); // 先移除舊的 spacer
-        const $spacer = $('<li class="runs-spacer" style="height: 7rem; background: transparent;"></li>');
-        $spacer.appendTo($runs);
+
     });
 
     return Spotboard.Dashboard;
