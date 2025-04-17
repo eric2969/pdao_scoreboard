@@ -201,11 +201,10 @@
       runs = res.data;
       const $tbody = $('#runs-body').empty();
       const selectedPositions = $('.seat.selected').map(function () {return $(this).data('position');}).get();
-
+      const problemFirst = {};
       runs.reverse();
       $.each(runs, function (_, run) {
-        if(run.team_position == "??")
-          return true;
+        if(run.team_position == "??") return true;
         const shouldShow = selectedPositions.length === 0 || selectedPositions.includes(run.team_position);
         const madeBtn = $('<button class="btn btn-sm">')
           .toggleClass('btn-warning', !run.made)
@@ -216,7 +215,6 @@
             if (!confirm(msg)) return;
             updateStatus(run.id, 'made', !run.made).then(renderRuns);
           });
-
         const sendBtn = $('<button class="btn btn-sm btn-primary">🎈待送出</button>')
           .text(run.sent ? '🎉已送出' : '🎈待送出')
           .toggleClass('btn-success', run.sent)
@@ -241,12 +239,12 @@
             statusClass = 'run-sent';
 
           const $row = $(`
-            <tr class="${statusClass}" data-position="${run.team_position}">
+            <tr class="${statusClass}" data-position="${run.team_position}" style="font-weight: ${run.isFirst?"900":"normal"};">
               <td>${run.id}</td>
               <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${run.team_name}</td>
               <td>${run.team_section}</td>
               <td>${run.team_position}</td>
-              <td>${run.problem_label}</td>
+              <td>${run.problem_label + (run.isFirst?"首殺":"")}</td>
               <td style="color:${run.color}; font-weight:bold; text-shadow: 0 0 2px #000;">${run.color}</td>
             </tr>
           `).on('mouseenter', () => highlightSeat(run.team_position))

@@ -166,7 +166,10 @@
     const teams = {};
     var teamStats = {};
     contestData.problems.forEach(p => {problems[p.id] = p;});
-    contestData.teams.forEach(t => {teams[t.id] = t;});
+    contestData.teams.forEach(t => {
+      if(t.position == "??") return true; // 只顯示參賽隊伍
+      teams[t.id] = t;
+    });
 
     function chk_login(){
       $.getJSON("{{ url_for('login_status') }}", function (res) {
@@ -191,8 +194,12 @@
           const runs = res.data.runs || {};
           const SolvedSet = new Set();
           const problemStats = {};
-          contestData.teams.forEach(t => {teamStats[t.id] = {solved: [], attempts: {}, penalty: 0, rank: 0};});
+          contestData.teams.forEach(t => {
+            if(t.position == "??") return true; // 只顯示參賽隊伍
+            teamStats[t.id] = {solved: [], attempts: {}, penalty: 0, rank: 0};
+          });
           runs.forEach(run => {
+            if(!(run.team in teams)) return true; // 只顯示參賽隊伍
             const pid = run.problem;
             const tid = run.team;
             const probMeta = problems[pid];
@@ -230,9 +237,9 @@
               <tr>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.id}</td>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.name}</td>
-                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${p.title}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 25vw;">${p.title}</td>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pStats.solves}</td>
-                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40vw;">${tName[1]}</td>
+                <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${tName[1]}</td>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${pStats.ftime}</td>
               </tr>
@@ -268,11 +275,14 @@
           return a[0].localeCompare(b[0]);
         }
       });
-      var rank = 1, prevSolved = -1, prevPenalty = -1;
+      var rank = 0, tieCnt = 0, prevSolved = -1, prevPenalty = -1;
       sortedTeams.forEach((team, index) => {
-        if (team[1].solved !== prevSolved || team[1].penalty !== prevPenalty) {
-          rank = index + 1;
-          prevSolved = team[1].solved;
+        solvedCnt = team[1].solved.length;
+        tieCnt++;
+        if (solvedCnt !== prevSolved || team[1].penalty !== prevPenalty) {
+          rank+=tieCnt;
+          tieCnt = 0;
+          prevSolved = solvedCnt;
           prevPenalty = team[1].penalty;
         }
         teamStats[team[0]].rank = rank;
@@ -297,7 +307,7 @@
         $('#team-stats').append(`
           <tr>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tid}</td>
-            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40vw;">${tName[1]}</td>
+            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${tName[1]}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.solved.length}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${total_attempt}</td>
@@ -360,8 +370,6 @@
       });
     }
   }
-
-  
   </script>
 </body>
 </html>

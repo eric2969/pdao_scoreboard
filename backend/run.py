@@ -15,7 +15,7 @@ CONFIG_PATH = "backend_file/scoreboard.json"
 DATA_PATH = "backend_file/contest_data.json"
 
 # config data
-contest_data = None
+contest_data, problem_meta, team_info = None, None, None
 sid, token = None, None
 
 # 讀取配置檔案
@@ -70,25 +70,20 @@ def save_accounts(accounts):
 
 # 載入題目與隊伍資訊
 def load_contest_metadata():
-    global contest_data
-    try:
-        data = contest_data
-        problems = {
-            p["id"]: {"name": p["name"], "color": p["color"], "title": p["title"]}
-            for p in data.get("problems", [])
+    global contest_data, problem_meta, team_info
+    data = contest_data
+    problem_meta = {
+        p["id"]: {"name": p["name"], "color": p["color"], "title": p["title"]}
+        for p in data.get("problems", [])
+    }
+    team_info = {
+        t["id"]: {
+            "name": re.sub(r"\s*\(.*?\)", "", t["name"]),
+            "position": t.get("position","??"),
+            "section": t.get("section","??"),
         }
-        teams = {
-            t["id"]: {
-                "name": re.sub(r"\s*\(.*?\)", "", t["name"]),
-                "position": t.get("position","??"),
-                "section": t.get("section","??"),
-            }
-            for t in data.get("teams", [])
-        }
-        return problems, teams
-    except Exception as e:
-        print(f"Error fetching data: {e}")
-        return []
+        for t in data.get("teams", [])
+    }
 
 def load_status():
     if not os.path.exists(STATUS_FILE):
@@ -161,8 +156,7 @@ def login_required_error(f):
 @app.route("/pdao_be/balloon", endpoint="index")
 @login_required
 def balloon():
-    pro, tem = load_contest_metadata()
-    contest_data = {"problems": pro, "teams": tem}
+    contest_data = {"problems": problem_meta, "teams": team_info}
     return render_template("balloon/index.html", contest_data=contest_data, current_user=session.get("username"))
 
 @app.route("/pdao_be/ballon/statistics", endpoint="stat")
@@ -247,7 +241,8 @@ def get_runs():
 @app.route("/pdao_be/api/runs/balloon", methods=["GET"], endpoint="api-runs_balloon")
 @login_required_error
 def api_runs():
-    problem_meta, team_info = load_contest_metadata()
+    global problem_meta, team_info
+    first = {}
     res = load_runs()
     if res.get("success", False):
         data = res.get("data")
@@ -259,6 +254,13 @@ def api_runs():
     for run in yes_runs:
         prob_info = problem_meta.get(run["problem"], {})
         team = team_info.get(run["team"], {})
+        if run["problem"] not in first:
+            first[run["problem"]] = run.get("id")
+            run["isFirst"] = True
+        elif run["id"] == first[run["problem"]]:
+            run["isFirst"] = True
+        else:
+            run["isFirst"] = False
         run["color"] = prob_info.get("color", "gray")
         run["problem_label"] = prob_info.get("name", "?")
         run["team_name"] = team.get("name", f"Team {run['team']}")
