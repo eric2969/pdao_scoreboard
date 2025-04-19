@@ -99,9 +99,9 @@ def Create_CreditFiles():
         json.dump(data, json_file, indent=4, ensure_ascii=False)
     print("Credit files have been created successfully.")
 
-def Reset_BU_Account():
+def Reset_Admin_Account():
     while True:
-        token = input("\nPlease enter the password for backend utility default account(Name: PDAO)(length must in [8,20]): ")
+        token = input("\nPlease enter the password for admin default account(Account Name: PDAO)(length must in [8,20]): ")
         if len(token) < 8 or len(token) > 20:
             print("Unlock token length must be between 8 and 20 characters. Please enter a valid one.")
             continue
@@ -210,6 +210,9 @@ def Edit_LazyJudge():
 
 print("Welcome to the PDOGS scoreboard tool!")
 print("Loading Problems and Teams data ...")
+
+# CSV file for problems and teams data
+# Make sure to replace your problems and teams data in the CSV files
 problem_csv = "ProblemsData.csv"
 teams_csv = "TeamsData.csv"
 if Loading_Json(problem_csv, teams_csv) == -1:
@@ -219,7 +222,7 @@ while True:
     type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Set Admin Default Password\n7. Exit\nEnter your choice: "))
     if type == 1:
         while True:
-            confirm = input("\nThis will reset scoreboard/BU and backend files. Do you want to continue? (y/n): ").strip().lower()
+            confirm = input("\nThis will reset scoreboard/admin backend files. Do you want to continue? (y/n): ").strip().lower()
             if confirm == 'y':
                 print("Continuing ...")
                 break
@@ -229,7 +232,7 @@ while True:
         Reset_Data()
         Create_ContestData()
         Create_CreditFiles()
-        Reset_BU_Account()
+        Reset_Admin_Account()
         Edit_Scoreboard()
         Edit_LazyJudge()
         print("Setup completed successfully.")
