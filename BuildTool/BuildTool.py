@@ -210,8 +210,8 @@ def Edit_LazyJudge():
 
 print("Welcome to the PDOGS scoreboard tool!")
 print("Loading Problems and Teams data ...")
-problem_csv = "ProblemsData_test.csv"
-teams_csv = "TeamsData.csv"
+problem_csv = "ProblemsData.csv"
+teams_csv = "TeamsData_test.csv"
 if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)
