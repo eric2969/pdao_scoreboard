@@ -200,7 +200,7 @@
   }
   function filter_sent() {
     $('#runs-body tr').show();
-    $('#runs-body tr.run-sent').hide();
+    $('#runs-body tr.run-made').hide();
     $('.fil_all').removeClass('selected');
     $('.fil_sent').addClass('selected');
     $('.fil_made').removeClass('selected');
@@ -288,6 +288,8 @@
             $row.hide();
           if($(".fil_made").hasClass("selected") && run.made)
             $row.hide();
+          if($(".fil_all").hasClass("selected"))
+            $row.show();
       });
 
       $("#balloon_rec").show();
