@@ -44,6 +44,11 @@
 
 <div class="container-flex">
   <div class="left-scrollable">
+    <div class="ms-auto d-flex gap-2" style="overflow: hidden;">
+      <button class="btn btn-outline-primary btn-sm fil_all selected" onclick="filter_all();">全部</button>
+      <button class="btn btn-outline-primary btn-sm fil_sent" onclick="filter_sent();">未送出</button>
+      <button class="btn btn-outline-primary btn-sm fil_made" onclick="filter_made();">未製作</button>
+    </div>
     <table id="balloon_rec" class="table table-bordered align-middle text-center bg-white" style="display: none;">
       <thead class="table-light" style="position: sticky; top: 0; z-index: 10; background-color: white;">
         <tr>
@@ -187,6 +192,27 @@
     return `${hours}:${minutes}:${seconds}`;
   }
 
+  function filter_all() {
+    $('#runs-body tr').show();
+    $('.fil_all').addClass('selected');
+    $('.fil_sent').removeClass('selected');
+    $('.fil_made').removeClass('selected');
+  }
+  function filter_sent() {
+    $('#runs-body tr').show();
+    $('#runs-body tr.run-sent').hide();
+    $('.fil_all').removeClass('selected');
+    $('.fil_sent').addClass('selected');
+    $('.fil_made').removeClass('selected');
+  }
+  function filter_made() {
+    $('#runs-body tr').show();
+    $('#runs-body tr.run-made').hide();
+    $('#runs-body tr.run-sent').hide();
+    $('.fil_all').removeClass('selected');
+    $('.fil_sent').removeClass('selected');
+    $('.fil_made').addClass('selected');
+  }
   // 渲染氣球製作狀態
   function renderRuns() {
     $.getJSON("{{ url_for('api-runs_balloon') }}", function (res) {
@@ -241,7 +267,7 @@
           const $row = $(`
             <tr class="${statusClass}" data-position="${run.team_position}" style="font-weight: ${run.isFirst?"900":"normal"};">
               <td>${run.id}</td>
-              <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${run.team_name}</td>
+              <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 10vw;">${run.team_name}</td>
               <td>${run.team_section}</td>
               <td>${run.team_position}</td>
               <td>${run.problem_label + (run.isFirst?"首殺":"")}</td>
@@ -257,6 +283,10 @@
           if (shouldShow)
             $row.show();
           else
+            $row.hide();
+          if($(".fil_sent").hasClass("selected") && run.sent)
+            $row.hide();
+          if($(".fil_made").hasClass("selected") && run.made)
             $row.hide();
       });
 
