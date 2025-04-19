@@ -288,7 +288,7 @@
             $row.hide();
           if(($(".fil_made").hasClass("selected") && run.made) || !shouldShow)
             $row.hide();
-          if($(".fil_all").hasClass("selected"))
+          if($(".fil_all").hasClass("selected") && shouldShow)
             $row.show();
       });
 
