@@ -79,9 +79,8 @@ module.exports = function (grunt) {
 
                         'robots.txt',
                         'index.html',
-                        'runs.php',
-                        'LockSet.php',
-                        'contest_data.json'
+                        'PDAO2025_contestData.json',
+                        'PDAO2025_result.json',
                     ],
                     dest: 'dist/'
                 } ]

@@ -36,8 +36,11 @@ config =
      *    ${apiBase}/runs.json
      *    ${apiBase}/contest.json
      */
-    apiBase : "https://ntu.im/pdao_be/api/runs",
-    contestData : "https://ntu.im/pdao_be/api/contest_data",
+    /** example config for pdogs.ntu.im in PDAO 2025:
+    apiBase : "http://localhost:3001/pdao_be/api/runs",
+    contestData : "http://localhost:3001/pdao_be/api/contest_data", **/
+    apiBase : "./PDAO2025_result.json",
+    contestData : "./PDAO2025_contestData.json",
 
     /**
      * Specify whether to use automatically diff and feed updated runs.
@@ -80,7 +83,7 @@ config =
     auto_play          : true,
 
     /** Specify whether to show the event dashboard in the right-side. */
-    show_events        : true,
+    show_events        : false,
 
     /** Specify the maximum number of recent events displayed in the dashboard. */
     max_notifications  : 100,
@@ -115,8 +118,9 @@ config =
      *
      * e.g. function(team) { ... }
      */
-    exclude_teams : [],
-    // exclude_teams : [2283, 2284, 2285, 2286, 2287, 2288, 2289, 2290, 2291, 2292, 2293, 2294, 2295, 2296, 2297, 2298, 2299],
+    //exclude_teams : [],
+    // this is the list of teams to be excluded from the scoreboard in PDAO 2025
+    exclude_teams : [2283, 2284, 2285, 2286, 2287, 2288, 2289, 2290, 2291, 2292, 2293, 2294, 2295, 2296, 2297, 2298, 2299],
 
     /**
      * Specify additional foreign or extra teams, as a function or a list of team id.
