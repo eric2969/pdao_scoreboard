@@ -279,12 +279,16 @@
           $row.append($(`<td>`).append(madeBtn));
           $row.append($(`<td>`).append(sendBtn));
           $tbody.append($row);
-      
+        
+          if (shouldShow)
+            $row.show();
+          else
+            $row.hide();
           if(($(".fil_sent").hasClass("selected") && run.sent) || !shouldShow)
             $row.hide();
           if(($(".fil_made").hasClass("selected") && run.made) || !shouldShow)
             $row.hide();
-          if($(".fil_all").hasClass("selected") || shouldShow)
+          if($(".fil_all").hasClass("selected"))
             $row.show();
       });
 
