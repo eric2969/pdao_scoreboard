@@ -219,7 +219,7 @@ if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)
 while True:
-    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create Backend Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Set Admin Default Password\n7. Exit\nEnter your choice: "))
+    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create PDOGS api Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Set Admin Default Password\n7. Exit\nEnter your choice: "))
     if type == 1:
         while True:
             confirm = input("\nThis will reset scoreboard/admin backend files. Do you want to continue? (y/n): ").strip().lower()
@@ -247,7 +247,7 @@ while True:
     elif type == 5:
         Edit_LazyJudge()
     elif type == 6:
-        Reset_BU_Account()
+        Reset_Admin_Account()
     elif type == 7:
         print("Exiting the program.")
         break

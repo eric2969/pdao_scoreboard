@@ -153,7 +153,7 @@ def login_required_error(f):
 
 # flask app routes
 
-@app.route("/pdao_be/balloon", endpoint="index")
+@app.route("/pdao_be/admin", endpoint="index")
 @login_required
 def balloon():
     contest_data = {"problems": problem_meta, "teams": team_info}

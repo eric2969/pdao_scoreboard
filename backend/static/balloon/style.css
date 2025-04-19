@@ -22,6 +22,49 @@ html, body {
     overflow-y: auto;
     min-height: 0;
   }
+
+  .top-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .custom-btn {
+    border-radius: 50px;
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+    padding: 6px 16px;
+  }
+
+  .custom-btn:hover,
+  .custom-btn:focus {
+    background-color: #0d6efd;
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .custom-btn.selected {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+  }
+
+  .scroll-container {
+    height: 80vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0; /* 必須與 top-toolbar 的高度對齊 */
+    z-index: 10;
+    background-color: white;
+  }
+
   .seat {
     border-radius: 8px;
     text-align: center;
@@ -84,12 +127,6 @@ html, body {
     background-color: #19c2fa !important;
     transition: background-color 0.3s ease-in-out;
   }
-
-  .selected {
-    background-color: #19c2fa !important;
-    transition: background-color 0.3s ease-in-out;
-  }
-  
   .btn-sm { font-size: 0.85rem; }
 
   .run-pending td{background-color: #ffe5e5 !important;} /* 淺紅色 */
