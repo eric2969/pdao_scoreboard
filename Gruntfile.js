@@ -79,6 +79,7 @@ module.exports = function (grunt) {
 
                         'robots.txt',
                         'index.html',
+                        'config.js',
                         'PDAO2025_contestData.json',
                         'PDAO2025_result.json',
                     ],
