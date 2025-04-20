@@ -13,6 +13,8 @@ function(Spotboard, $) {
         $("#oiiai-gif").remove();
         $("#pop-gif").remove();
         $("#quick-gif").remove();
+        $("#gif-off-icon").remove();
+        $("#gif-on-icon").remove();
     }
     $.when(
         Spotboard.Manager.loadContest(),

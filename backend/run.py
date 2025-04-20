@@ -1,18 +1,21 @@
-from flask import Flask, render_template, request, redirect, jsonify, session, url_for, abort
+from flask import Flask, render_template, request, redirect, jsonify, session, url_for
 from functools import wraps
 from flask_cors import CORS
-import requests, json, os, re, hashlib, time
-from datetime import datetime, timedelta
+import requests, json, os, re, hashlib
+from datetime import timedelta
 
 app = Flask(__name__, static_url_path='/pdao_be/static')
 CORS(app, resources={r"/pdao_be/api/*": {"origins": "*"}})
-app.secret_key = hashlib.sha256("PDAOiiaioiiiai".encode('utf-8')).hexdigest()
-app.permanent_session_lifetime = timedelta(minutes=10)
 
-STATUS_FILE = "backend_file/status.json"
-ACCOUNT_FILE = "backend_file/account.json"
+# for using local runs file
+local_flag = 1
+LOCAL_RUNS_PATH = "backend_file/PDAO2025_result.json"
+
+STATUS_PATH = "backend_file/status.json"
+ACCOUNT_PATH = "backend_file/account.json"
 CONFIG_PATH = "backend_file/scoreboard.json"
 DATA_PATH = "backend_file/contest_data.json"
+SESSION_KEY_PATH = "backend_file/session_key.txt"
 
 # config data
 contest_data, problem_meta, team_info = None, None, None
@@ -59,13 +62,13 @@ def save_frozen(frozen):
 
 # 載入帳號資料
 def load_accounts():
-    if not os.path.exists(ACCOUNT_FILE):
-        raise FileNotFoundError(f"Account file '{ACCOUNT_FILE}' not found.")
-    with open(ACCOUNT_FILE, "r", encoding="utf-8") as f:
+    if not os.path.exists(ACCOUNT_PATH):
+        raise FileNotFoundError(f"Account file '{ACCOUNT_PATH}' not found.")
+    with open(ACCOUNT_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def save_accounts(accounts):
-    with open(ACCOUNT_FILE, "w", encoding="utf-8") as f:
+    with open(ACCOUNT_PATH, "w", encoding="utf-8") as f:
         json.dump(accounts, f, indent=2)
 
 # 載入題目與隊伍資訊
@@ -86,17 +89,37 @@ def load_contest_metadata():
     }
 
 def load_status():
-    if not os.path.exists(STATUS_FILE):
+    if not os.path.exists(STATUS_PATH):
         return {}
-    with open(STATUS_FILE, "r", encoding="utf-8") as f:
+    with open(STATUS_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def save_status(status):
-    with open(STATUS_FILE, "w", encoding="utf-8") as f:
+    with open(STATUS_PATH, "w", encoding="utf-8") as f:
         json.dump(status, f)
 
 def load_runs():
     global sid, token
+    if local_flag:
+        try:
+            with open(LOCAL_RUNS_PATH, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                contestTime = data["data"]["time"]["contestTime"]
+                timestamp = data["data"]["time"]["timestamp"]
+                #if end and flag is frozen
+                if load_frozen() and contestTime <= timestamp:
+                    left,right = -1, len(data["data"]["runs"])
+                    while left + 1 < right:
+                        mid = (left + right) // 2
+                        if data["data"]["runs"][mid]["submissionTime"] * 60 + 3600 > contestTime:
+                            right = mid
+                        else:
+                            left = mid
+                    for i in range(left+1, len(data["data"]["runs"])):
+                        data["data"]["runs"][i]["result"] = "Pending"
+                return {"success": True, "data": data}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
     try:
         url = f"https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/{sid}/runs"
         headers = {
@@ -300,15 +323,20 @@ def frozen():
     return jsonify({"Success": "True", "status": "True" if Frozen_flag else "False"})
 
 def Initialize():
+    secret_key = None
     try:
         load_config()
         load_accounts()
         load_runs()
         load_contest_metadata()
         load_status()
+        with open(SESSION_KEY_PATH, "r") as f:
+            secret_key = f.read().strip()
     except Exception as e:
         print(f"Error loading configuration: {e}")
         exit(1)
+    app.secret_key = hashlib.sha256(secret_key.encode('utf-8')).hexdigest()
+    app.permanent_session_lifetime = timedelta(minutes=10)
 
 Initialize()
 

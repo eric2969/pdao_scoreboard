@@ -28,22 +28,24 @@ html, body {
     top: 0;
     z-index: 20;
     background-color: white;
-    padding: 10px;
+    padding: 0;
+    padding-bottom: 0.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
 
-  .custom-btn {
-    border-radius: 50px;
+  .top-toolbar.custom-btn {
+    border-radius: 3rem;
     transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    padding: 6px 16px;
+    font-weight: 900;
+    padding: 0;
+    margin: 0;
   }
 
   .custom-btn:hover,
   .custom-btn:focus {
     background-color: #0d6efd;
     color: white;
-    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
   }
 
   .custom-btn.selected {
@@ -53,7 +55,7 @@ html, body {
   }
 
   .scroll-container {
-    height: 80vh;
+    height: 85vh;
     overflow-y: auto;
     position: relative;
   }

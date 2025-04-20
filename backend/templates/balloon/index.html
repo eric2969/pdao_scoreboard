@@ -11,7 +11,7 @@
 </head>
 <body>
 
-  <nav class="navbar navbar-light bg-light shadow-sm mb-4 px-4">
+  <nav class="navbar navbar-light bg-light shadow-sm mb-3 px-4">
     <div class="container-fluid">
       <a class="navbar-brand mb-0 h4" href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='balloon/pdaologo.ico') }}" alt="PDAO Logo" style="height: 1em; vertical-align: -0.1em;"> PDAO Admin</a>
       <div class="d-flex gap-3">
@@ -46,12 +46,15 @@
     <div class="left-scrollable">
     
         <!-- 上方按鈕條 -->
-        <div class="top-toolbar d-flex gap-2 justify-content-center">
+        <div class="top-toolbar d-flex justify-content-left gap-2">
           <button class="btn btn-outline-primary btn-sm fil_all selected custom-btn" onclick="filter_all();">全部</button>
-          <button class="btn btn-outline-primary btn-sm fil_sent custom-btn" onclick="filter_sent();">未送出</button>
+          <div style="width: 1.2px; background-color: #ccc;"></div>
           <button class="btn btn-outline-primary btn-sm fil_made custom-btn" onclick="filter_made();">未製作</button>
+          <div style="width: 1.2px; background-color: #ccc;"></div>
+          <button class="btn btn-outline-primary btn-sm fil_sent custom-btn" onclick="filter_sent();">已製作未送出</button>
+          <div style="width: 1.2px; background-color: #ccc;"></div>
+          <button class="btn btn-outline-primary btn-sm fil_finish custom-btn" onclick="filter_finish();">已送出</button>
         </div>
-    
         <!-- 可滾動的表格區域 -->
         <div class="scroll-container">
           <table id="balloon_rec" class="table table-bordered align-middle text-center bg-white">
@@ -202,27 +205,6 @@
     return `${hours}:${minutes}:${seconds}`;
   }
 
-  function filter_all() {
-    $('#runs-body tr').show();
-    $('.fil_all').addClass('selected');
-    $('.fil_sent').removeClass('selected');
-    $('.fil_made').removeClass('selected');
-  }
-  function filter_sent() {
-    $('#runs-body tr').show();
-    $('#runs-body tr.run-sent').hide();
-    $('.fil_all').removeClass('selected');
-    $('.fil_sent').addClass('selected');
-    $('.fil_made').removeClass('selected');
-  }
-  function filter_made() {
-    $('#runs-body tr').show();
-    $('#runs-body tr.run-made').hide();
-    $('#runs-body tr.run-sent').hide();
-    $('.fil_all').removeClass('selected');
-    $('.fil_sent').removeClass('selected');
-    $('.fil_made').addClass('selected');
-  }
   // 渲染氣球製作狀態
   function renderRuns() {
     $.getJSON("{{ url_for('api-runs_balloon') }}", function (res) {
@@ -245,14 +227,14 @@
         const madeBtn = $('<button class="btn btn-sm">')
           .toggleClass('btn-warning', !run.made)
           .toggleClass('btn-success', run.made)
-          .text(run.made ? '🎉已完成' : '🛠️待製作')
+          .text(run.made ? '已完成' : '待製作')
           .click(() => {
             const msg = run.made ? '要回復為「待製作」嗎？' : '確定已完成製作？';
             if (!confirm(msg)) return;
             updateStatus(run.id, 'made', !run.made).then(renderRuns);
           });
-        const sendBtn = $('<button class="btn btn-sm btn-primary">🎈待送出</button>')
-          .text(run.sent ? '🎉已送出' : '🎈待送出')
+        const sendBtn = $('<button class="btn btn-sm btn-primary">待送出</button>')
+          .text(run.sent ? '已送出' : '待送出')
           .toggleClass('btn-success', run.sent)
           .toggleClass('btn-primary', !run.sent)
           .prop('disabled', !run.made)
@@ -275,7 +257,7 @@
             statusClass = 'run-sent';
 
           const $row = $(`
-            <tr class="${statusClass}" data-position="${run.team_position}" style="font-weight: ${run.isFirst?"900":"normal"};">
+            <tr class="${statusClass} pos-${run.team_position}" data-position="${run.team_position}" style="font-weight: ${run.isFirst?"900":"normal"};">
               <td>${run.id}</td>
               <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 10vw;">${run.team_name}</td>
               <td>${run.team_section}</td>
@@ -289,14 +271,20 @@
           $row.append($(`<td>`).append(madeBtn));
           $row.append($(`<td>`).append(sendBtn));
           $tbody.append($row);
-        
-          $row.show();
-          if(($(".fil_sent").hasClass("selected") && run.sent) || !shouldShow)
-            $row.hide();
-          if(($(".fil_made").hasClass("selected") && run.made) || !shouldShow)
-            $row.hide();
-          if($(".fil_all").hasClass("selected") && shouldShow)
-            $row.show();
+          // status filter
+          //if select all and shouldshow, show it; otherwise, into next check
+          if(!($(".fil_all").hasClass("selected") && shouldShow)){
+            //if should be hiddden, hide it
+            if(!shouldShow)
+              $row.hide();
+            //into this filter all should be shown
+            /* filter logic
+              1. if select made, hide balloon status is made
+              2. if select sent, hide balloon status 
+            */
+            else if(($(".fil_made").hasClass("selected") && statusClass != "run-pending") || ($(".fil_sent").hasClass("selected") && statusClass != "run-made") || ($(".fil_finish").hasClass("selected") && statusClass != "run-sent"))
+              $row.hide();
+          }
       });
 
       $("#balloon_rec").show();
@@ -315,10 +303,99 @@
         $("#remaining-time").addClass("bg-success").removeClass("bg-warning").removeClass("bg-danger");
     });
   }
-
   $(renderRuns);
   setInterval(renderRuns, 1000);
+  // status filter
+  function filter_all() {
+    $('.fil_all').addClass('selected');
+    $('.fil_made').removeClass('selected');
+    $('.fil_sent').removeClass('selected');
+    $('.fil_finish').removeClass('selected');
+    const ShouldShow = $('.seat.selected').map(function () {return $(this).data('position');}).get();
+    // If no seat is selected
+    if (ShouldShow.length == 0){
+      $('#runs-body tr').show();
+      return;
+    }
+    $('#runs-body tr').hide();
+    $.each(ShouldShow, function(_, pos){
+      $("#runs-body .pos-"+pos).show();
+    });
+  }
+  function filter_made() {
+    $('.fil_all').removeClass('selected');
+    $('.fil_made').addClass('selected');
+    $('.fil_sent').removeClass('selected');
+    $('.fil_finish').removeClass('selected');
+    const ShouldShow = $('.seat.selected').map(function () {return $(this).data('position');}).get();
+    //hide everything
+    $('#runs-body tr').hide();
+    // If no seat is selected
+    if (ShouldShow.length == 0){
+      $('#runs-body tr.run-pending').show();
+      return;
+    }
+    $.each(ShouldShow, function(_, pos){
+      $("#runs-body tr.run-pending.pos-"+pos).show();
+    });
+  }
+  function filter_sent() {
+    $('.fil_all').removeClass('selected');
+    $('.fil_made').removeClass('selected');
+    $('.fil_sent').addClass('selected');
+    $('.fil_finish').removeClass('selected');
+    const ShouldShow = $('.seat.selected').map(function () {return $(this).data('position');}).get();
+    //hide everything
+    $('#runs-body tr').hide();
+    // If no seat is selected
+    if (ShouldShow.length == 0){
+      $('#runs-body tr.run-made').show();
+      return;
+    }
+    $.each(ShouldShow, function(_, pos){
+      $("#runs-body tr.run-made.pos-"+pos).show();
+    });
+  }
+  function filter_finish() {
+    $('.fil_all').removeClass('selected');
+    $('.fil_made').removeClass('selected');
+    $('.fil_sent').removeClass('selected');
+    $('.fil_finish').addClass('selected');
+    const ShouldShow = $('.seat.selected').map(function () {return $(this).data('position');}).get();
+    //hide everything
+    $('#runs-body tr').hide();
+    // If no seat is selected
+    if (ShouldShow.length == 0){
+      $('#runs-body tr.run-sent').show();
+      return;
+    }
+    $.each(ShouldShow, function(_, pos){
+      $("#runs-body tr.run-sent.pos-"+pos).show();
+    });
+  }
 
+  // seat filter
+  $('.seat.occupied').on('click', function () {
+    $(this).toggleClass('selected'); // 切換選取狀態（支援多選）
+    if($(".fil_all").hasClass("selected")) filter_all();
+    else if ($(".fil_made").hasClass("selected")) filter_made();
+    else if ($(".fil_sent").hasClass("selected")) filter_sent();
+    else if ($(".fil_finish").hasClass("selected")) filter_finish();
+  });
+
+  function SelectReset() {
+    $(".seat.occupied").removeClass("selected"); // 清除所有選取狀態
+    $("#runs-body tr").hide(); // 顯示所有行
+    if($(".fil_all").hasClass("selected"))
+      $('#runs-body tr').show();
+    else if ($(".fil_made").hasClass("selected"))
+      $('#runs-body tr.run-pending').show();
+    else if ($(".fil_sent").hasClass("selected"))
+      $('#runs-body tr.run-made').show();
+  }
+
+
+  // 帳號管理
   $('#accountModal').on('show.bs.modal', function () {
     $('#username').val('{{ current_user }}');
     $('#password').val('');
@@ -399,35 +476,6 @@
       });
     }
   });
-  // 點擊座位時，顯示該隊伍的詳細資訊
-  // 點擊座位 → 選取並篩選左側氣球紀錄
-  $('.seat.occupied').on('click', function () {
-    $(this).toggleClass('selected'); // 切換選取狀態（支援多選）
-
-    // 收集所有被選取的位置
-    const selectedPositions = $('.seat.selected').map(function () {return $(this).data('position');}).get();
-
-    // 如果沒有選擇任何隊伍 → 顯示全部
-    if (selectedPositions.length === 0) {
-      $('#runs-body tr').show();
-      return;
-    }
-
-    // 否則只顯示選到的隊伍紀錄
-    $('#runs-body tr').each(function () {
-      const rowPos = $(this).data('position');
-      if (selectedPositions.includes(rowPos)) {
-        $(this).show();
-      } else {
-        $(this).hide();
-      }
-    });
-  });
-
-  function SelectReset() {
-    $(".seat.occupied").removeClass("selected"); // 清除所有選取狀態
-    $('#runs-body tr').show();
-  }
 
 </script>
 </body>

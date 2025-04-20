@@ -9,6 +9,7 @@ async function loadSound() {
     SE_pop = await new Audio("assets/sound/pop.mp3");
 }
 
+// random id to prevent cache
 async function makeid(length) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -118,7 +119,6 @@ config =
      *
      * e.g. function(team) { ... }
      */
-    //exclude_teams : [],
     // this is the list of teams to be excluded from the scoreboard in PDAO 2025
     exclude_teams : [2283, 2284, 2285, 2286, 2287, 2288, 2289, 2290, 2291, 2292, 2293, 2294, 2295, 2296, 2297, 2298, 2299],
 

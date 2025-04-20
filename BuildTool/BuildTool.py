@@ -97,7 +97,7 @@ def Create_CreditFiles():
     }
     with open(scoreboard_path, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
-    print("Credit files have been created successfully.")
+    print("Credit files have been created successfully, scoreboard has been frozen.")
 
 def Reset_Admin_Account():
     while True:
@@ -106,11 +106,15 @@ def Reset_Admin_Account():
             print("Unlock token length must be between 8 and 20 characters. Please enter a valid one.")
             continue
         break
-    data = { "PDAO": hashlib.sha256(token.encode()).hexdigest()}
+    data = {"PDAO": hashlib.sha256(token.encode()).hexdigest()}
     acct_path = "../backend/backend_file/account.json"
     with open(acct_path, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, indent=4, ensure_ascii=False)
-    print("Unlock token has been created successfully, scoreboard has applied frozen lock.")
+    random_session_key = os.urandom(16).hex()
+    session_path = "../backend/backend_file/session_key.txt"
+    with open(session_path, mode='w', encoding='utf-8') as session_file:
+        session_file.write(random_session_key)
+    print("Unlock token and Session Key has been created successfully.")
 
 def Edit_Scoreboard():
     global headers, sid, pid
