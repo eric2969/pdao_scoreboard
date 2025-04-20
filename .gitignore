@@ -35,14 +35,9 @@ package-lock.json
 js/dist
 
 public/
-dist/
+dist
 
-#credit file
-src/credit/*
-
-#contest file
-src/contest_data.json
-
+# Backend files
 backend/logs/
 backend/__pycache__
 
