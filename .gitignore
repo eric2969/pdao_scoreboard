@@ -35,7 +35,7 @@ package-lock.json
 js/dist
 
 public/
-dist
+
 
 #credit file
 src/credit/*
