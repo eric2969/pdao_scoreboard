@@ -178,19 +178,19 @@ def login_required_error(f):
 
 @app.route("/pdao_be/admin", endpoint="index")
 @login_required
-def balloon():
+def admin():
     contest_data = {"problems": problem_meta, "teams": team_info}
-    return render_template("balloon/index.html", contest_data=contest_data, current_user=session.get("username"))
+    return render_template("admin/index.html", contest_data=contest_data, current_user=session.get("username"))
 
-@app.route("/pdao_be/ballon/statistics", endpoint="stat")
+@app.route("/pdao_be/admin/statistics", endpoint="stat")
 @login_required
 def statistics():
     sec = request.args.get("sec")
     if sec is None:
         sec = "pro"
-    return render_template("balloon/stat.html", contest_data=contest_data, current_user=session.get("username"), req_sec = sec)
+    return render_template("admin/stat.html", contest_data=contest_data, current_user=session.get("username"), req_sec = sec)
 
-@app.route("/pdao_be/balloon/login", methods=["GET", "POST"], endpoint="login")
+@app.route("/pdao_be/admin/login", methods=["GET", "POST"], endpoint="login")
 def login():
     error = False
     if request.method == "POST":
@@ -203,14 +203,14 @@ def login():
             session['username'] = username
             return redirect(url_for("index"))  # 預設回首頁
         error = True
-    return render_template("balloon/login.html", error=error)
+    return render_template("admin/login.html", error=error)
 
-@app.route("/pdao_be/balloon/logout", endpoint="logout")
+@app.route("/pdao_be/admin/logout", endpoint="logout")
 def logout():
     session.pop('logged_in', None)
     return redirect(url_for('login'))
 
-@app.route("/pdao_be/balloon/login_status", endpoint="login_status")
+@app.route("/pdao_be/admin/login_status", endpoint="login_status")
 def login_status():
     status = session.get('logged_in', False) and session.get('username', None) in load_accounts()
     return jsonify({"logged_in": status, "username": session.get("username", None)})

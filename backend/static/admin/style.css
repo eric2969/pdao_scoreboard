@@ -141,3 +141,5 @@ html, body {
   .run-sent:hover td{background-color: #c8f7c5 !important;} /* 稍深綠色 */
   
   .run-pending td,.run-made td,.run-sent td{ transition: background-color 0.3s ease-in-out !important;}
+
+  .stat:hover td{background-color: #d1e7dd; transition: background-color 0.3s ease-in-out;}

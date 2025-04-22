@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>解題統計 - PDAO Admin</title>
-  <link rel="icon" href="{{ url_for('static', filename='balloon/pdaologo.ico') }}" type="image/x-icon">
+  <link rel="icon" href="{{ url_for('static', filename='admin/pdaologo.ico') }}" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin/style.css') }}">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -234,7 +235,7 @@
             const pStats = problemStats[p.id] || { solves: 0, first: '-', ftime: '-' };
             const tName = (pStats.first != '-' ?pStats.first.match(/^([^()]+)\(([^()]*)\)$/):['-','-','-']);
             $('#problem-stats').append(`
-              <tr>
+              <tr class="stat">
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.id}</td>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.name}</td>
                 <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 25vw;">${p.title}</td>
@@ -305,7 +306,7 @@
         total_attempt = 0;
         t.solved.forEach((pid) => {total_attempt += (t.attempts[pid] || 0);});
         $('#team-stats').append(`
-          <tr>
+          <tr class="stat">
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tid}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${tName[1]}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
