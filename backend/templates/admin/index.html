@@ -206,6 +206,7 @@
   }
 
   // 渲染氣球製作狀態
+  var prev_runs = null;
   function renderRuns() {
     $.getJSON("{{ url_for('api-runs_balloon') }}", function (res) {
       if(res.success != true){
@@ -216,7 +217,22 @@
         }
         return
       }
+      //time display
+      const contestTime = res.time.contestTime;
+      const timestamp = res.time.timestamp;
+      const remain = Math.max(0, contestTime - timestamp);
+      $("#remaining-time").text(`剩餘時間：${timeformat(remain)}`);
+      if (remain <= 0)
+        $("#remaining-time").removeClass("bg-success").removeClass("bg-warning").addClass("bg-danger");
+      else if (remain <= 3600)
+        $("#remaining-time").removeClass("bg-success").addClass("bg-warning").removeClass("bg-danger");
+      else
+        $("#remaining-time").addClass("bg-success").removeClass("bg-warning").removeClass("bg-danger");
+      //check has update?
+      if(prev_runs != null && prev_runs === JSON.stringify(res.data))
+        return;
       runs = res.data;
+      prev_runs = JSON.stringify(res.data);
       const $tbody = $('#runs-body').empty();
       const selectedPositions = $('.seat.selected').map(function () {return $(this).data('position');}).get();
       const problemFirst = {};
@@ -289,18 +305,6 @@
 
       $("#balloon_rec").show();
       $("#loading").removeClass("d-flex").addClass("d-none");
-
-
-      const contestTime = res.time.contestTime;
-      const timestamp = res.time.timestamp;
-      const remain = Math.max(0, contestTime - timestamp);
-      $("#remaining-time").text(`剩餘時間：${timeformat(remain)}`);
-      if (remain <= 0)
-        $("#remaining-time").removeClass("bg-success").removeClass("bg-warning").addClass("bg-danger");
-      else if (remain <= 3600)
-        $("#remaining-time").removeClass("bg-success").addClass("bg-warning").removeClass("bg-danger");
-      else
-        $("#remaining-time").addClass("bg-success").removeClass("bg-warning").removeClass("bg-danger");
     });
   }
   $(renderRuns);
