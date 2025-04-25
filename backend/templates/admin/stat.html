@@ -54,9 +54,9 @@
           <div style="width: 3px; background-color: #ccc;"></div>
           <a class="nav-link text-dark fw-bold" href="{{ url_for('index') }}">🎈氣球分發</a>
           <div style="width: 1px; background-color: #ccc;"></div>
-          <a class="nav-link text-dark fw-bold" href="{{url_for('stat', sec='pro')}}">📘題目統計</a>
+          <button class="nav-link text-dark fw-bold" onclick="renderRuns('pro');">📘題目統計</button>
           <div style="width: 1px; background-color: #ccc;"></div>
-          <a class="nav-link text-dark fw-bold" href="{{url_for('stat', sec='team')}}">👥隊伍統計</a> 
+          <button class="nav-link text-dark fw-bold" onclick="renderRuns('team');">👥隊伍統計</button> 
           <div style="width: 1px; background-color: #ccc;"></div>
         </div>
         <div class="ms-auto d-flex gap-2">
@@ -77,7 +77,7 @@
           <button class="btn btn-outline-success btn-sm" onclick="download_pro_csv();">下載 CSV</button>
         </div>
       </div>
-      <div class="table-responsive" style="height: 80vh; overflow-y: auto; overflow-x: hidden; min-height: 200px;">
+      <div class="table-responsive" style="height: 80vh; overflow-y: auto;">
         <table class="table table-bordered text-center align-middle table-sm" style="width: 100%;">
         <thead class="table-light" style="position: sticky; top: 0; z-index: 1; background-color: #f8f9fa;">
           <tr>
@@ -183,12 +183,12 @@
     $(chk_login);
     setInterval(chk_login, 1000); // 每分鐘檢查一次登入狀態
 
-    function renderRuns(){
+    function renderRuns(sec = reqSec){
       $('#loading').show();
       $('#problem-stats-container').hide();
       $('#team-stats-container').hide();
       $.ajax({
-        url: "{{ url_for('api-runs') }}",
+        url: "{{ url_for('api-runs_admin') }}",
         method: "GET",
         dataType: "json",
         success: function (res) {
@@ -249,9 +249,9 @@
           calculateRank();
           renderTeamTable();
           $('#loading').hide();
-          if(reqSec == "pro")
+          if(sec == "pro")
             $('#problem-stats-container').show();
-          else if (reqSec == "team")
+          else if (sec == "team")
             $('#team-stats-container').show();
         },
         error: function (xhr) {
@@ -263,7 +263,8 @@
         }
       });
     }
-    $(renderRuns);
+    $(renderRuns(reqSec));
+
 
     // 計算排名
     function calculateRank() {

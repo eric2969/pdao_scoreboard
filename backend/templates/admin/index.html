@@ -127,7 +127,9 @@
 
 <script>
   const teams = {{ contest_data.teams | tojson }};
+  const problems = {{ contest_data.problems | tojson }};
   const positionMap = {};
+
   const rowsSet = new Set(), colsSet = new Set(), teamByPosition = {};
   // 將所有隊伍的座位位置存入 teamByPosition 物件中
   $.each(teams, (id, team) => {
@@ -271,17 +273,17 @@
             statusClass = 'run-made';
           else if (run.made && run.sent)
             statusClass = 'run-sent';
-
+          console.log(run.team, run.problem);
           const $row = $(`
-            <tr class="${statusClass} pos-${run.team_position}" data-position="${run.team_position}" style="font-weight: ${run.isFirst?"900":"normal"};">
+            <tr class="${statusClass} pos-${teams[run.team].position}" data-position="${teams[run.team].position}" style="font-weight: ${run.fst?"900":"normal"};">
               <td>${run.id}</td>
-              <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 10vw;">${run.team_name}</td>
-              <td>${run.team_section}</td>
-              <td>${run.team_position}</td>
-              <td>${run.problem_label + (run.isFirst?"首殺":"")}</td>
-              <td style="color:${run.color}; font-weight:bold; text-shadow: 0 0 2px #000;">${run.color}</td>
+              <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 10vw;">${teams[run.team].name}</td>
+              <td>${teams[run.team].section}</td>
+              <td>${teams[run.team].position}</td>
+              <td>${problems[run.problem].name + (run.fst?"首殺":"")}</td>
+              <td style="color:${problems[run.problem].color}; font-weight:bold; text-shadow: 0 0 2px #000;">${problems[run.problem].color}</td>
             </tr>
-          `).on('mouseenter', () => highlightSeat(run.team_position))
+          `).on('mouseenter', () => highlightSeat(teams[run.team].position))
             .on('mouseleave', () => $('.seat').removeClass('highlight'));
 
           $row.append($(`<td>`).append(madeBtn));

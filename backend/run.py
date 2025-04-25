@@ -98,43 +98,27 @@ def save_status(status):
     with open(STATUS_PATH, "w", encoding="utf-8") as f:
         json.dump(status, f)
 
-def load_runs():
+def load_runs(admin=False):
     global sid, token
-    if local_flag:
-        try:
+    try:
+        if local_flag:
             with open(LOCAL_RUNS_PATH, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                contestTime = data["data"]["time"]["contestTime"]
-                timestamp = data["data"]["time"]["timestamp"]
-                #if end and flag is frozen
-                if load_frozen() and contestTime <= timestamp:
-                    left,right = -1, len(data["data"]["runs"])
-                    while left + 1 < right:
-                        mid = (left + right) // 2
-                        if data["data"]["runs"][mid]["submissionTime"] * 60 + 3600 > contestTime:
-                            right = mid
-                        else:
-                            left = mid
-                    for i in range(left+1, len(data["data"]["runs"])):
-                        data["data"]["runs"][i]["result"] = "Pending"
-                return {"success": True, "data": data}
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-    try:
-        url = f"https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/{sid}/runs"
-        headers = {
-            "auth-token": token,
-            "Content-Type": "application/json"
-        }
-        res = requests.get(url, headers=headers, timeout=3)
-        res.raise_for_status()
-        data = res.json()
+        else:
+            url = f"https://be.pdogs.ntu.im/hardcode/team-contest-scoreboard/{sid}/runs"
+            headers = {
+                "auth-token": token,
+                "Content-Type": "application/json"
+            }
+            res = requests.get(url, headers=headers, timeout=3)
+            res.raise_for_status()
+            data = res.json()
         if data["success"] == False:
             return {"success": False, "error": data["error"]}
         contestTime = data["data"]["time"]["contestTime"]
         timestamp = data["data"]["time"]["timestamp"]
-        #if end and flag is frozen
-        if load_frozen() and contestTime <= timestamp:
+        #if end and flag is frozen bypass admin
+        if load_frozen() and contestTime <= timestamp and not admin:
             left,right = -1, len(data["data"]["runs"])
             while left + 1 < right:
                 mid = (left + right) // 2
@@ -260,11 +244,19 @@ def get_runs():
         return jsonify(res.get("data"))
     else:
         return jsonify(res), 500
+    
+@app.route("/pdao_be/api/runs/admin", methods=["GET"], endpoint="api-runs_admin")
+@login_required_error
+def get_runs():
+    res = load_runs(True)
+    if res.get("success", False):
+        return jsonify(res.get("data"))
+    else:
+        return jsonify(res), 500
 
 @app.route("/pdao_be/api/runs/balloon", methods=["GET"], endpoint="api-runs_balloon")
 @login_required_error
 def api_runs():
-    global problem_meta, team_info
     first = {}
     res = load_runs()
     if res.get("success", False):
@@ -274,21 +266,12 @@ def api_runs():
     runs = data["data"]["runs"]
     yes_runs = extract_first_yes_runs(runs)
     status = load_status()
-    for run in yes_runs:
-        prob_info = problem_meta.get(run["problem"], {})
-        team = team_info.get(run["team"], {})
+    for run in yes_runs or run["id"] == first[run["problem"]]:
         if run["problem"] not in first:
             first[run["problem"]] = run.get("id")
-            run["isFirst"] = True
-        elif run["id"] == first[run["problem"]]:
-            run["isFirst"] = True
+            run["fst"] = True
         else:
-            run["isFirst"] = False
-        run["color"] = prob_info.get("color", "gray")
-        run["problem_label"] = prob_info.get("name", "?")
-        run["team_name"] = team.get("name", f"Team {run['team']}")
-        run["team_position"] = team.get("position", "??")
-        run["team_section"] = team.get("section", "??")
+            run["fst"] = False
         run["made"] = status.get(str(run["id"]), {}).get("made", False)
         run["sent"] = status.get(str(run["id"]), {}).get("sent", False)
     
@@ -341,4 +324,4 @@ def Initialize():
 Initialize()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3001, debug=True)
+    app.run(host="0.0.0.0", port=3000, debug=True)
