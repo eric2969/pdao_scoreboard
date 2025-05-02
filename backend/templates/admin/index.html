@@ -242,7 +242,6 @@
       runs.reverse();
       $.each(runs, function (_, run) {
         if(run.team_position == "??") return true;
-        const shouldShow = selectedPositions.length === 0 || selectedPositions.includes(run.team_position);
         const madeBtn = $('<button class="btn btn-sm">')
           .toggleClass('btn-warning', !run.made)
           .toggleClass('btn-success', run.made)
