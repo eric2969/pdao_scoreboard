@@ -238,7 +238,6 @@
       runs = res.data;
       prev_runs = JSON.stringify(res.data);
       const $tbody = $('#runs-body').empty();
-      const selectedPositions = $('.seat.selected').map(function () {return $(this).data('position');}).get();
       const problemFirst = {};
       runs.reverse();
       $.each(runs, function (_, run) {
@@ -290,21 +289,18 @@
           $row.append($(`<td>`).append(madeBtn));
           $row.append($(`<td>`).append(sendBtn));
           $tbody.append($row);
-          // status filter
-          //if select all and shouldshow, show it; otherwise, into next check
-          if(!($(".fil_all").hasClass("selected") && shouldShow)){
-            //if should be hiddden, hide it
-            if(!shouldShow)
-              $row.hide();
-            //into this filter all should be shown
-            /* filter logic
-              1. if select made, hide balloon status is made
-              2. if select sent, hide balloon status 
-            */
-            else if(($(".fil_made").hasClass("selected") && statusClass != "run-pending") || ($(".fil_sent").hasClass("selected") && statusClass != "run-made") || ($(".fil_finish").hasClass("selected") && statusClass != "run-sent"))
-              $row.hide();
-          }
+          $row.hide();
       });
+      //status filter
+      //if select all and shouldshow, show it; otherwise, into next check
+      if($(".fil_all").hasClass("selected"))
+        filter_all();
+      else if ($(".fil_made").hasClass("selected"))
+        filter_made();
+      else if ($(".fil_sent").hasClass("selected"))
+        filter_sent();
+      else if ($(".fil_finish").hasClass("selected"))
+        filter_finish();
 
       $("#balloon_rec").show();
       $("#loading").removeClass("d-flex").addClass("d-none");
