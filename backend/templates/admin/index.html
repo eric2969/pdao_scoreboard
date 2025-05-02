@@ -231,8 +231,10 @@
       else
         $("#remaining-time").addClass("bg-success").removeClass("bg-warning").removeClass("bg-danger");
       //check has update?
-      if(prev_runs != null && prev_runs === JSON.stringify(res.data))
+      if(prev_runs != null && prev_runs === JSON.stringify(res.data)){
+        console.log("No update");
         return;
+      }
       runs = res.data;
       prev_runs = JSON.stringify(res.data);
       const $tbody = $('#runs-body').empty();
@@ -249,7 +251,7 @@
           .click(() => {
             const msg = run.made ? '要回復為「待製作」嗎？' : '確定已完成製作？';
             if (!confirm(msg)) return;
-            updateStatus(run.id, 'made', !run.made).then(renderRuns);
+            updateStatus(run.id, 'made', !run.made).then(renderRuns());
           });
         const sendBtn = $('<button class="btn btn-sm btn-primary">待送出</button>')
           .text(run.sent ? '已送出' : '待送出')
@@ -264,7 +266,7 @@
               return;
             const msg = '確定已送出氣球？';
             if (!confirm(msg)) return;
-            updateStatus(run.id, 'sent', !run.sent).then(renderRuns);
+            updateStatus(run.id, 'sent', !run.sent).then(renderRuns());
           });
           let statusClass = '';
           if (!run.made && !run.sent)
@@ -273,7 +275,6 @@
             statusClass = 'run-made';
           else if (run.made && run.sent)
             statusClass = 'run-sent';
-          console.log(run.team, run.problem);
           const $row = $(`
             <tr class="${statusClass} pos-${teams[run.team].position}" data-position="${teams[run.team].position}" style="font-weight: ${run.fst?"900":"normal"};">
               <td>${run.id}</td>
@@ -325,6 +326,7 @@
     }
     $('#runs-body tr').hide();
     $.each(ShouldShow, function(_, pos){
+      console.log(pos);
       $("#runs-body .pos-"+pos).show();
     });
   }
@@ -341,9 +343,7 @@
       $('#runs-body tr.run-pending').show();
       return;
     }
-    $.each(ShouldShow, function(_, pos){
-      $("#runs-body tr.run-pending.pos-"+pos).show();
-    });
+    $.each(ShouldShow, function(_, pos){$(".run-pending.pos-"+pos).show();});
   }
   function filter_sent() {
     $('.fil_all').removeClass('selected');

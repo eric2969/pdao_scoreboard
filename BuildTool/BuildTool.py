@@ -79,26 +79,6 @@ def Create_ContestData():
     print(f"Problems and Teams files have been converted to JSON file '{json_file_path}'.")
     print("Please make sure to restart the backend server to update contest data.")
 
-def Create_CreditFiles():
-    global headers, sid
-    scoreboard_path = "../backend/backend_file/scoreboard.json"
-    if sid == "":
-        while True:
-            sid = input("\nEnter the scoreboard id from PDOGS: ")
-            if sid == "" or int(sid) <= 0:
-                print("Scoreboard id cannot be empty. Please enter a valid one.")
-                continue
-            break
-    Chk_Token()
-    data = {
-        "sid": sid,
-        "token": headers["auth-token"],
-        "frozen": True
-    }
-    with open(scoreboard_path, mode='w', encoding='utf-8') as json_file:
-        json.dump(data, json_file, indent=4, ensure_ascii=False)
-    print("Credit files have been created successfully, scoreboard has been frozen.")
-
 def Reset_Admin_Account():
     while True:
         token = input("\nPlease enter the password for admin default account(Account Name: PDAO)(length must in [8,20]): ")
@@ -116,12 +96,26 @@ def Reset_Admin_Account():
         session_file.write(random_session_key)
     print("Unlock token and Session Key has been created successfully.")
 
-def Edit_Scoreboard():
+def Edit_Scoreboard_Credit_File():
     global headers, sid, pid
+    scoreboard_path = "../backend/backend_file/scoreboard.json"
     if sid == "":
-        sid = input("\nEnter the scoreboard id from PDOGS: ")
+        while True:
+            sid = input("\nEnter the scoreboard id from PDOGS: ")
+            if sid == "" or int(sid) <= 0:
+                print("Scoreboard id cannot be empty. Please enter a valid one.")
+                continue
+            break
     Chk_Token()
-    print("Updating scoreboard", sid, "...")
+    print("Updating scoreboard credit data", sid, "...")
+    data = {
+        "sid": sid,
+        "token": headers["auth-token"],
+        "frozen": True
+    }
+    with open(scoreboard_path, mode='w', encoding='utf-8') as json_file:
+        json.dump(data, json_file, indent=4, ensure_ascii=False)
+    print("Credit files have been created successfully, scoreboard has been frozen.")
     url = f"https://be.pdogs.ntu.im/team-contest-scoreboard/{sid}"
     data = {
         "challenge_label": "X",
@@ -223,7 +217,7 @@ if Loading_Json(problem_csv, teams_csv) == -1:
     print("Error loading data. Please check the CSV files.")
     exit(1)
 while True:
-    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create PDOGS api Credit File\n4. Edit PDOGS Scoreboard Setting\n5. Edit Problems Lazy Judge Configuration\n6. Set Admin Default Password\n7. Exit\nEnter your choice: "))
+    type = int(input("\nMenu:\n1. Complete Setup\n2. Create Scoreboard Contest File\n3. Create/Edit PDOGS api Credit File and Scoreboard Setting\n4. Edit Problems Lazy Judge Configuration\n5. Set Admin Default Password\n6. Exit\nEnter your choice: "))
     if type == 1:
         while True:
             confirm = input("\nThis will reset scoreboard/admin backend files. Do you want to continue? (y/n): ").strip().lower()
@@ -235,9 +229,8 @@ while True:
                 exit(0)
         Reset_Data()
         Create_ContestData()
-        Create_CreditFiles()
+        Edit_Scoreboard_Credit_File()
         Reset_Admin_Account()
-        Edit_Scoreboard()
         Edit_LazyJudge()
         print("Setup completed successfully.")
         print("Exiting the program.")
@@ -245,14 +238,12 @@ while True:
     elif type == 2:
         Create_ContestData()
     elif type == 3:
-        Create_CreditFiles()
+        Edit_Scoreboard_Credit_File()
     elif type == 4:
-        Edit_Scoreboard()
-    elif type == 5:
         Edit_LazyJudge()
-    elif type == 6:
+    elif type == 5:
         Reset_Admin_Account()
-    elif type == 7:
+    elif type == 6:
         print("Exiting the program.")
         break
     else:
