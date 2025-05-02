@@ -113,13 +113,13 @@
         <table class="table table-bordered text-center align-middle table-sm">
         <thead class="table-light" style="position: sticky; top: 0; z-index: 1; background-color: #f8f9fa;">
           <tr>
+            <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Rank</th>
             <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">ID</th>
             <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Name</th>
             <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Dept.</th>
             <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Solved</th>
             <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Total Attempt</th>
             <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Penalty</th>
-            <th class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Rank</th>
           </tr>
         </thead>
         <tbody id="team-stats"></tbody>
@@ -308,13 +308,13 @@
         t.solved.forEach((pid) => {total_attempt += (t.attempts[pid] || 0);});
         $('#team-stats').append(`
           <tr class="stat">
+            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.rank}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tid}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30vw;">${tName[1]}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${tName[2]}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.solved.length}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${total_attempt}</td>
             <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.penalty}</td>
-            <td class="text-truncate" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${t.rank}</td>
           </tr>
         `);
       });
