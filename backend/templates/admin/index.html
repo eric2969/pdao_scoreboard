@@ -6,8 +6,10 @@
   <link rel="icon" href="{{ url_for('static', filename='admin/pdaologo.ico') }}" type="image/x-icon">
   <link rel="stylesheet" href="{{ url_for('static', filename='admin/style.css') }}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" crossorigin="anonymous" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -126,6 +128,14 @@
 </div>
 
 <script>
+  // 全域設定（可依需求調整）
+  toastr.options = {
+    "closeButton": true,            // 顯示關閉按鈕
+    "positionClass": "toast-bottom-center", // 出現在底部置中
+    "timeOut": "2000",              // 3 秒後自動關閉
+    "progressBar": true,            // 顯示進度條
+    "preventDuplicates": true       // 不重複顯示相同訊息
+  };
   const teams = {{ contest_data.teams | tojson }};
   const problems = {{ contest_data.problems | tojson }};
   const positionMap = {};
@@ -196,7 +206,12 @@
       url: "{{ url_for('api-update_status') }}",
       method: 'POST',
       contentType: 'application/json',
-      data: JSON.stringify({ id, field, value })
+      data: JSON.stringify({ id, field, value }),
+      success: () => toastr.success('操作已完成！', '成功'),
+      error: (jqXHR, textStatus, errorThrown) => {
+        const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
+        toastr.error(`操作失敗：${msg}`, '錯誤');
+      }
     });
   }
 
@@ -210,7 +225,8 @@
   // 渲染氣球製作狀態
   var prev_runs = null;
   function renderRuns() {
-    $.getJSON("{{ url_for('api-runs_balloon') }}", function (res) {
+    $.getJSON("{{ url_for('api-runs_balloon') }}")
+    .done(function (res) {
       if(res.success != true){
         if(res.error == "NoPermission"){
           alert("請重新登入。");
@@ -300,9 +316,16 @@
         filter_sent();
       else if ($(".fil_finish").hasClass("selected"))
         filter_finish();
-
+      if($("#loading").hasClass("d-flex"))
+        toastr.success('資料已載入！', '成功');
+      else
+        toastr.info('資料已更新！', '資訊');
       $("#balloon_rec").show();
       $("#loading").removeClass("d-flex").addClass("d-none");
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
+      toastr.warning(`載入失敗：${msg}`, '錯誤');
     });
   }
   $(renderRuns);
@@ -449,9 +472,21 @@
   }
 
   function pollFrozenStatus() {
-    $.getJSON("{{ url_for('api-frozen_get') }}", function (res) {
-      const frozen = res.status;
-      $('#frozenSwitch').prop('checked', (frozen == "True" ?"true": ""));
+    $.getJSON("{{ url_for('api-frozen_get') }}")
+    .done(function (res) {
+      const bef = $('#frozenSwitch').prop('checked');
+      const frozen = (res.status == "True" ?true: "");
+      if(bef != frozen){
+        if(frozen == "True")
+          toastr.info('記分板已封板！', '資訊');
+        else
+          toastr.info('記分板已開板！', '資訊');
+        $('#frozenSwitch').prop('checked', frozen);
+      }
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
+      toastr.warning(`載入失敗：${msg}`, '錯誤');
     });
   }
   $(pollFrozenStatus);
@@ -472,8 +507,16 @@
         data: JSON.stringify({ frozen: isChecked }),
         success: res => {
           $('#frozenSwitch').prop('checked', res.frozen);
+          if (res.frozen) {
+            toastr.success('記分板已封板！', '成功');
+          } else {
+            toastr.success('記分板已開板！', '成功');
+          }
         },
-        error: () => alert('切換失敗')
+        error: (jqXHR, textStatus, errorThrown) => {
+          const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
+          toastr.error(`操作失敗：${msg}`, '錯誤');
+        }
       });
     }
   });

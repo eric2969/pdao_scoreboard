@@ -6,8 +6,10 @@
   <link rel="icon" href="{{ url_for('static', filename='admin/pdaologo.ico') }}" type="image/x-icon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ url_for('static', filename='admin/style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" crossorigin="anonymous" />
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js" crossorigin="anonymous"></script>
   <script>
     // CSV 下載功能
     function download_pro_csv() {
@@ -73,7 +75,7 @@
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">📘 題目解題統計</h4>
         <div class="ms-auto d-flex gap-2">
-          <button class="btn btn-outline-secondary btn-sm" onclick="renderRuns();">更新</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="renderRuns('pro');">更新</button>
           <button class="btn btn-outline-success btn-sm" onclick="download_pro_csv();">下載 CSV</button>
         </div>
       </div>
@@ -105,7 +107,7 @@
           </select>
         </div>
         <div class="ms-auto d-flex gap-2">
-          <button class="btn btn-outline-secondary btn-sm" onclick="renderRuns();">更新</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="renderRuns('team');">更新</button>
           <button class="btn btn-outline-success btn-sm" onclick="download_team_csv();">下載 CSV</button>
         </div>
       </div>
@@ -161,6 +163,14 @@
   </div>
 
   <script>
+    // 全域設定（可依需求調整）
+    toastr.options = {
+      "closeButton": true,            // 顯示關閉按鈕
+      "positionClass": "toast-bottom-center", // 出現在底部置中
+      "timeOut": "2000",              // 3 秒後自動關閉
+      "progressBar": true,            // 顯示進度條
+      "preventDuplicates": true       // 不重複顯示相同訊息
+    };
     const contestData = {{ contest_data | tojson }};
     const reqSec = "{{ req_sec }}";
     const problems = {};
@@ -246,20 +256,21 @@
               </tr>
             `);
           });
-          calculateRank();
-          renderTeamTable();
           $('#loading').hide();
           if(sec == "pro")
             $('#problem-stats-container').show();
-          else if (sec == "team")
+          else if (sec == "team"){
+            calculateRank();
+            renderTeamTable();
             $('#team-stats-container').show();
+          }
+          toastr.success('資料載入完成！', '成功'); 
         },
-        error: function (xhr) {
-          if (xhr.status === 500) {
-            console.warn('Server error 500, retrying...');
-            setTimeout(() => renderRuns(), 1000);
-          } else
-            alert('載入資料時發生錯誤，請稍後再試。\n' + xhr.status + ': ' + xhr.statusText);
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.log(jqXHR);
+          const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
+          toastr.warning(`載入失敗：${msg}，三秒後重試`, '錯誤');
+          setTimeout(() => renderRuns(), 3000);
         }
       });
     }
