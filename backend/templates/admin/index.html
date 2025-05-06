@@ -476,7 +476,7 @@
     $.getJSON("{{ url_for('api-frozen_get') }}")
     .done(function (res) {
       const bef = $('#frozenSwitch').prop('checked');
-      const frozen = (res.status == "True" ?true: "");
+      const frozen = (res.status == "True" ?true: false);
       if(bef != frozen){
         if(frozen === true)
           toastr.info('記分板已封板！', '資訊');
@@ -509,7 +509,7 @@
         data: JSON.stringify({ frozen: isChecked }),
         success: res => {
           if(res.success == "True"){
-            const frozen = (res.status == "True" ?true: "");
+            const frozen = (res.status == "True" ? true: false);
             $('#frozenSwitch').prop('checked', frozen);
             if (frozen === true) {
               toastr.success('記分板已封板！', '成功');
