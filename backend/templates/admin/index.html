@@ -518,7 +518,6 @@
             }
           } else 
             toastr.error('操作失敗：' + res.error, '錯誤');
-          }
         },
         error: (jqXHR, textStatus, errorThrown) => {
           const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
