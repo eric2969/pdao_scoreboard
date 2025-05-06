@@ -223,10 +223,12 @@
   }
 
   // 渲染氣球製作狀態
+  var attempt = 0;
   var prev_runs = null;
   function renderRuns() {
     $.getJSON("{{ url_for('api-runs_balloon') }}")
     .done(function (res) {
+      attempt = 0;
       if(res.success != true){
         if(res.error == "NoPermission"){
           alert("請重新登入。");
@@ -247,10 +249,8 @@
       else
         $("#remaining-time").addClass("bg-success").removeClass("bg-warning").removeClass("bg-danger");
       //check has update?
-      if(prev_runs != null && prev_runs === JSON.stringify(res.data)){
-        console.log("No update");
+      if(prev_runs != null && prev_runs === JSON.stringify(res.data))
         return;
-      }
       runs = res.data;
       prev_runs = JSON.stringify(res.data);
       const $tbody = $('#runs-body').empty();
@@ -324,8 +324,11 @@
       $("#loading").removeClass("d-flex").addClass("d-none");
     })
     .fail(function (jqXHR, textStatus, errorThrown) {
-      const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
-      toastr.warning(`載入失敗：${msg}`, '錯誤');
+      attempt++;
+      if(attempt >= 3) {
+        const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
+        toastr.warning(`載入失敗：${msg}`, '錯誤');
+      }
     });
   }
   $(renderRuns);
@@ -511,11 +514,10 @@
           if(res.success == "True"){
             const frozen = (res.status == "True" ? true: false);
             $('#frozenSwitch').prop('checked', frozen);
-            if (frozen === true) {
+            if (frozen === true)
               toastr.success('記分板已封板！', '成功');
-            } else {
+            else
               toastr.success('記分板已開板！', '成功');
-            }
           } else 
             toastr.error('操作失敗：' + res.error, '錯誤');
         },
@@ -523,9 +525,9 @@
           const msg = jqXHR.responseJSON?.message || errorThrown || textStatus;
           toastr.error(`操作失敗：${msg}`, '錯誤');
         }
-      });
-    }
-    check_frozen = true; // 恢復檢查凍結狀態
+      }).then(() => check_frozen = true); // 恢復檢查凍結狀態
+    } else
+      check_frozen = true; // 恢復檢查凍結狀態
   });
 
 </script>
