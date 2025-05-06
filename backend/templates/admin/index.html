@@ -477,7 +477,7 @@
       const bef = $('#frozenSwitch').prop('checked');
       const frozen = (res.status == "True" ?true: "");
       if(bef != frozen){
-        if(frozen == "True")
+        if(frozen === true)
           toastr.info('記分板已封板！', '資訊');
         else
           toastr.info('記分板已開板！', '資訊');
