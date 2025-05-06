@@ -303,7 +303,7 @@ def frozen_status():
 def frozen():
     Frozen_flag = request.json.get("frozen", True)
     save_frozen(Frozen_flag)
-    return jsonify({"Success": "True", "status": "True" if Frozen_flag else "False"})
+    return jsonify({"success": "True", "status": "True" if Frozen_flag else "False", "error": "Null"})
 
 def Initialize():
     secret_key = None
@@ -319,7 +319,7 @@ def Initialize():
         print(f"Error loading configuration: {e}")
         exit(1)
     app.secret_key = hashlib.sha256(secret_key.encode('utf-8')).hexdigest()
-    app.permanent_session_lifetime = timedelta(minutes=10)
+    app.permanent_session_lifetime = timedelta(hours=1)
 
 Initialize()
 

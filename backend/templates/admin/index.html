@@ -470,8 +470,9 @@
       });
     }
   }
-
+  var check_frozen = true;
   function pollFrozenStatus() {
+    if(!check_frozen) return;
     $.getJSON("{{ url_for('api-frozen_get') }}")
     .done(function (res) {
       const bef = $('#frozenSwitch').prop('checked');
@@ -493,6 +494,7 @@
   setInterval(pollFrozenStatus, 1000); // 每 2 秒檢查一次凍結狀態
   // 用戶手動切換凍結狀態
   $('#frozenSwitch').on('change', function (e) {
+    check_frozen = false;
     const isChecked = $(this).prop('checked');
     const message = isChecked ? '確定要封板嗎？' : '確定要開板嗎？';
     // 取消切換，等待使用者確認
@@ -506,11 +508,16 @@
         contentType: 'application/json',
         data: JSON.stringify({ frozen: isChecked }),
         success: res => {
-          $('#frozenSwitch').prop('checked', res.frozen);
-          if (res.frozen) {
-            toastr.success('記分板已封板！', '成功');
-          } else {
-            toastr.success('記分板已開板！', '成功');
+          if(res.success == "True"){
+            const frozen = (res.status == "True" ?true: "");
+            $('#frozenSwitch').prop('checked', frozen);
+            if (frozen === true) {
+              toastr.success('記分板已封板！', '成功');
+            } else {
+              toastr.success('記分板已開板！', '成功');
+            }
+          } else 
+            toastr.error('操作失敗：' + res.error, '錯誤');
           }
         },
         error: (jqXHR, textStatus, errorThrown) => {
@@ -519,6 +526,7 @@
         }
       });
     }
+    check_frozen = true; // 恢復檢查凍結狀態
   });
 
 </script>
